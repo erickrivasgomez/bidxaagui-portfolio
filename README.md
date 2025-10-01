@@ -28,13 +28,4 @@ Update colors in `styles.css` under `:root`:
   --muted:#7b7b7b;
   --accent:#2d4b3a;
   --card:#ffffff;
-  --line:#e8e3dc;
 }
-```
-Share your new palette and I’ll integrate it.
-
-## Next steps
-- Replace placeholders with your images/logo in `assets/`
-- Provide color palette and preferred typefaces
-- Add pages for tienda/cursos if needed
-- Hook a real form endpoint (Formspree/Netlify/EmailJS) when ready

@@ -1,0 +1,339 @@
+/* Custom fonts: Add @font-face for TAN Meringue and TAN Summers here if available */
+
+:root{
+  --bg:#faf7f0;         /* background base - warm cream (Arena alt) */
+  --bg-alt:#4a5239;     /* alternating background - deep olive (from text primary) */
+  --bg-alt2:#c89665; /* ALTERNATIVA: café claro (skin tone) - descomenta para comparar */
+  --text:#4a5239;       /* primary text - deep olive (from image) */
+  --text-light:#faf7f0; /* light text for dark backgrounds */
+  --muted:#7a8264;      /* secondary text - sage olive (from image) */
+  --accent:#b85c3c;     /* accent - rust orange (from image) */
+  --card:#ffffff;       /* surfaces - white for cards */
+  --line:#d4b5a8;       /* subtle borders - dusty rose (from image) */
+}
+
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  padding-top:60px;
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Merienda",Georgia,serif;
+  font-size:1.05rem;
+  line-height:1.6;
+}
+
+h1,h2,h3{font-family:"Merienda",Georgia,serif; color:var(--text); font-weight:600}
+h1{font-size:clamp(2rem, 4vw + 1rem, 4rem); line-height:1.1}
+h2{font-size:clamp(1.5rem, 2vw + 0.5rem, 2.25rem);}
+h3{font-size:1.125rem;}
+
+.container{width:min(1100px, 92%); margin-inline:auto}
+.section{padding:72px 0}
+.section-alt{background:var(--bg-alt); color:var(--text-light)}
+.section-alt h2, .section-alt h3, .section-alt .bio-content h2{color:var(--text-light)}
+.section-alt2{background:var(--bg-alt2); color:var(--text-light)}
+.section-alt2 h2, .section-alt2 h3, .section-alt2 .bio-content h2{color:var(--text-light)}
+.section-head{margin-bottom:28px}
+.section-head p{color:var(--muted)}
+.intro-content{max-width:900px; margin:24px auto 0}
+.intro-content h2{font-size:1.5rem; margin-bottom:20px}
+.intro-content p{margin-bottom:20px; line-height:1.8}
+.highlight-text{font-style:italic; color:var(--accent); font-weight:500; padding:16px; background:rgba(184,92,60,0.08); border-radius:8px}
+
+/* Accessibility */
+.skip-link{position:absolute; left:-9999px; top:auto;}
+.skip-link:focus{left:16px; top:16px; background:#fff; padding:8px 12px; border:1px solid var(--line)}
+
+/* Color Customizer */
+.theme-selector{position:fixed; bottom:24px; right:24px; z-index:100; display:none}
+.theme-toggle{width:48px; height:48px; border-radius:50%; background:var(--card); border:1px solid var(--line); display:grid; place-items:center; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.1); transition:.2s ease}
+.theme-toggle:hover{transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,0.15)}
+.theme-toggle svg{color:var(--text)}
+.theme-panel{position:absolute; bottom:60px; right:0; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px; width:280px; max-height:80vh; overflow-y:auto; box-shadow:0 8px 24px rgba(0,0,0,0.12); opacity:0; visibility:hidden; transform:translateY(8px); transition:.25s ease}
+.theme-panel.open{opacity:1; visibility:visible; transform:translateY(0)}
+.theme-panel h3{margin:0 0 14px; font-size:.95rem; color:var(--text); font-weight:600}
+.preset-buttons{display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--line)}
+.preset-btn{padding:6px 10px; border:1px solid var(--line); border-radius:8px; background:transparent; cursor:pointer; font-size:.75rem; color:var(--text); transition:.2s ease}
+.preset-btn:hover{background:rgba(0,0,0,0.04); border-color:var(--accent)}
+.color-controls{display:grid; gap:12px}
+.color-control{display:grid; gap:6px}
+.color-control label{font-size:.8rem; color:var(--muted); font-weight:500}
+.color-control input[type="color"]{width:100%; height:40px; border:1px solid var(--line); border-radius:8px; cursor:pointer}
+.reset-btn{margin-top:16px; width:100%; padding:10px; border:1px solid var(--line); border-radius:8px; background:var(--accent); color:var(--card); cursor:pointer; font-size:.85rem; font-weight:500; transition:.2s ease}
+.reset-btn:hover{opacity:.9; transform:translateY(-1px)}
+
+/* Header */
+.site-header{position:fixed; top:0; left:0; right:0; z-index:100; backdrop-filter:saturate(180%) blur(10px); background:var(--bg-alt); border-bottom:1px solid var(--line)}
+.header-inner{display:flex; align-items:center; justify-content:space-between; padding:14px 0}
+.brand{font-family:"Merienda",serif; font-weight:700; letter-spacing:1px; color:var(--text-light); text-decoration:none; display:flex; align-items:center; gap:12px}
+.brand-logo{height:40px; width:auto; border-radius:8px}
+.menu-toggle{display:none}
+.site-nav ul{list-style:none; display:flex; gap:22px; margin:0; padding:0}
+.site-nav a{font-size:.9rem; letter-spacing:.02em; color:var(--text-light); text-decoration:none; display:flex; align-items:center}
+.site-nav a:hover{color:var(--bg); opacity:0.9}
+.site-nav svg{display:block; color:var(--text-light)}
+
+/* Hero */
+.hero{padding:96px 0 72px}
+.hero-layout{display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:start}
+.hero-left{display:flex; flex-direction:column; gap:24px}
+.hero-image{width:100%; max-width:380px; aspect-ratio:1; border-radius:50%; overflow:hidden; margin:0 auto}
+.hero-image img{width:100%; height:100%; object-fit:cover}
+.hero-quote{font-family:"Merienda",serif; font-size:clamp(1.125rem, 1.5vw, 1.5rem); font-style:italic; line-height:1.4; text-align:center; margin:0; padding:0 12px}
+.hero-cta-text{font-size:.9rem; line-height:1.6; text-align:center; margin:0; padding:0 12px; color:var(--muted)}
+.hero-cta-text a{color:var(--accent); text-decoration:underline; font-weight:500}
+.hero-cta-text a:hover{color:var(--text)}
+.hero-right{display:flex; flex-direction:column; gap:32px; font-size:clamp(1.3rem, 1.8vw + 0.4rem, 2rem); line-height:1.3}
+.hero-right p{margin:0; text-align:justify; font-weight:400}
+
+.btn{display:inline-block; padding:10px 16px; border:1px solid var(--text); text-decoration:none; color:var(--text); border-radius:999px; transition:.2s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--text); color:var(--bg); border-color:var(--text)}
+.btn-ghost{background:transparent}
+
+/* Cards / Grid */
+.grid{display:grid; gap:20px}
+.cards{grid-template-columns:repeat(3, 1fr)}
+.card{background:var(--card); border:1px solid var(--line); padding:24px; border-radius:14px; display:flex; flex-direction:column; gap:10px}
+.card h3{margin:0 0 12px; font-size:1.25rem}
+.card p{margin:0 0 12px; line-height:1.7}
+.card-expanded{gap:16px; padding:32px}
+.card-list{list-style:none; padding:0; margin:12px 0; display:flex; flex-direction:column; gap:8px}
+.card-list li{padding-left:0; line-height:1.6; color:var(--text)}
+.card-highlight{font-style:italic; color:var(--accent); font-weight:500; background:rgba(184,92,60,0.06); padding:12px; border-radius:8px; margin-top:8px; margin-bottom:12px}
+.card .link{margin-top:auto; color:var(--accent); text-decoration:none; font-weight:500}
+.card .link:hover{text-decoration:underline}
+
+/* Gallery */
+.gallery{grid-template-columns:repeat(4, 1fr)}
+.gallery-item{position:relative; aspect-ratio:4/3; display:grid; place-items:end start; padding:16px; background:linear-gradient(135deg, rgba(45,75,58,.12), rgba(0,0,0,.04)); color:var(--text); border:1px solid var(--line); border-radius:14px; text-decoration:none}
+.gallery-item span{background:rgba(255,255,255,0.7); padding:6px 10px; border-radius:12px; font-size:.85rem}
+
+/* About */
+.about{display:grid; grid-template-columns:1.25fr .75fr; gap:32px; align-items:center}
+.about-text h3{color:var(--text-light); font-size:1rem}
+.about-media{display:flex; align-items:center; justify-content:center}
+.about-media img{max-width:100%; height:auto; object-fit:contain}
+.autocuidado-list{list-style:none; padding:0; margin:16px 0; display:flex; flex-direction:column; gap:12px}
+.autocuidado-list li{padding-left:0; line-height:1.7; color:var(--text-light); opacity:0.95; font-size:0.95rem}
+.autocuidado-highlight{font-style:italic; color:var(--text-light); font-weight:500; background:rgba(255,255,255,0.12); padding:14px; border-radius:8px; margin:16px 0; font-size:0.95rem}
+.media-placeholder{background:var(--card); border:1px dashed var(--line); border-radius:16px; min-height:280px; display:grid; place-items:center; color:var(--muted)}
+
+/* Contact */
+.contact{display:grid; grid-template-columns:1fr 1fr; gap:24px}
+.contact p{font-size:1.05rem}
+.contact-list{list-style:none; padding:0; margin:12px 0 0; display:flex; flex-direction:column; gap:6px}
+.contact-list a{color:var(--accent); text-decoration:none}
+.contact-list a:hover{text-decoration:underline}
+.contact-form{display:grid; gap:12px}
+.contact-form label{display:grid; gap:6px; font-size:.95rem}
+.contact-form input, .contact-form textarea{border:1px solid var(--line); border-radius:12px; padding:10px 12px; font:inherit; background:var(--card)}
+.contact-form button{width:max-content}
+
+/* Bio Sections */
+.bio-section{padding:60px 0}
+.bio-layout{display:grid; grid-template-columns:120px 1fr; gap:40px; align-items:center; max-width:900px; margin:0 auto}
+.bio-layout.wide-content{grid-template-columns:100px 1fr; max-width:1000px}
+.bio-layout.reverse{grid-template-columns:1fr 100px}
+.bio-icon{display:flex; align-items:center; justify-content:center; color:var(--accent); opacity:0.85}
+.bio-icon svg{width:80px; height:80px}
+.bio-content h2{margin-top:0; margin-bottom:16px; color:var(--text)}
+.bio-content p{margin:0 0 16px; line-height:1.7; font-size:1.05rem}
+.bio-content p:last-child{margin-bottom:0}
+.section-alt .bio-icon, .section-alt2 .bio-icon{color:var(--text-light); opacity:1}
+
+/* Terapias Grid Cards */
+.therapies-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:24px; max-width:1200px; margin:0 auto}
+.therapy-card{background:rgba(255,255,255,0.1); padding:32px 24px; border-radius:16px; border:2px solid rgba(255,255,255,0.2); text-align:center; cursor:pointer; transition:all 0.3s ease}
+.therapy-card:hover{transform:translateY(-4px); background:rgba(255,255,255,0.15); border-color:rgba(255,255,255,0.4); box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+.therapy-card-emoji{font-size:3rem; margin-bottom:16px}
+.therapy-card h3{margin:0 0 8px; color:var(--text-light); font-size:1.3rem}
+.therapy-card p{margin:0 0 20px; color:var(--text-light); opacity:0.85; font-size:0.95rem}
+.therapy-card-btn{background:rgba(255,255,255,0.2); color:var(--text-light); border:none; padding:10px 24px; border-radius:8px; cursor:pointer; font-weight:600; transition:0.3s ease}
+.therapy-card-btn:hover{background:rgba(255,255,255,0.3)}
+
+/* Therapy Modal */
+.therapy-modal{position:fixed; inset:0; z-index:1000; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.3s ease}
+.therapy-modal.active{opacity:1; pointer-events:all}
+.therapy-modal-overlay{position:absolute; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px)}
+.therapy-modal-content{position:relative; background:var(--card); max-width:800px; max-height:85vh; width:90%; margin:20px; border-radius:20px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.4); transform:scale(0.9); transition:transform 0.3s ease}
+.therapy-modal.active .therapy-modal-content{transform:scale(1)}
+.therapy-modal-close{position:absolute; top:16px; right:16px; background:rgba(0,0,0,0.1); border:none; width:40px; height:40px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.3s ease; z-index:10}
+.therapy-modal-close:hover{background:rgba(0,0,0,0.2); transform:rotate(90deg)}
+.therapy-modal-close svg{color:var(--text)}
+.therapy-modal-body{padding:48px 40px; overflow-y:auto; max-height:85vh}
+.therapy-modal-emoji{font-size:4rem; text-align:center; margin-bottom:20px}
+.therapy-modal-body h2{margin:0 0 8px; text-align:center; color:var(--text)}
+.therapy-modal-body h3{margin:0 0 24px; text-align:center; color:var(--muted); font-weight:500; font-size:1.1rem}
+.therapy-modal-body h4{margin:24px 0 12px; color:var(--text); font-size:1.1rem}
+.therapy-modal-text p{margin-bottom:16px; line-height:1.8}
+.therapy-list{list-style:none; padding:0; margin:16px 0; display:flex; flex-direction:column; gap:10px}
+.therapy-list li{padding-left:0; line-height:1.7}
+.therapy-highlight{font-style:italic; color:var(--accent); font-weight:500; background:rgba(184,92,60,0.08); padding:14px; border-radius:8px; margin:16px 0}
+
+/* Nota Importante */
+.nota-importante{max-width:800px; margin:0 auto; padding:32px; background:var(--card); border:2px solid var(--line); border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.nota-importante h3{margin-top:0; margin-bottom:20px; color:var(--text); text-align:center}
+.nota-importante p{margin-bottom:16px; line-height:1.8; color:var(--text)}
+.nota-importante p:last-child{margin-bottom:0}
+.nota-highlight{font-style:italic; color:var(--accent); font-weight:500; background:rgba(184,92,60,0.06); padding:14px; border-radius:8px; margin-top:20px}
+
+/* CTA Section */
+.cta-section{background:linear-gradient(135deg, var(--accent) 0%, var(--bg-alt2) 100%); color:var(--text-light)}
+.cta-content{text-align:center; max-width:800px; margin:0 auto}
+.cta-content h2{color:var(--text-light); margin-bottom:16px}
+.cta-content p{font-size:1.1rem; margin-bottom:40px; opacity:0.95}
+.cta-buttons{display:flex; gap:20px; justify-content:center; flex-wrap:wrap}
+.cta-btn{display:inline-flex; align-items:center; gap:12px; padding:16px 32px; border-radius:12px; text-decoration:none; font-weight:600; font-size:1.05rem; transition:all 0.3s ease; border:2px solid transparent}
+.cta-btn svg{flex-shrink:0}
+.cta-primary{background:var(--text-light); color:var(--accent); box-shadow:0 4px 12px rgba(0,0,0,0.2)}
+.cta-primary:hover{transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.3)}
+.cta-secondary{background:transparent; color:var(--text-light); border-color:var(--text-light)}
+.cta-secondary:hover{background:var(--text-light); color:var(--accent)}
+
+/* Comunidad */
+.comunidad-intro{max-width:900px; margin:24px auto 0; text-align:center}
+.comunidad-intro p{margin-bottom:20px; line-height:1.8; font-size:1.05rem}
+.comunidad-section{padding:80px 0}
+.talleres-section{background:#916637; color:var(--text-light)}
+.talleres-section .comunidad-content h2, .talleres-section .comunidad-content h3, .talleres-section .comunidad-content p, .talleres-section .comunidad-list li{color:var(--text-light)}
+.talleres-section .comunidad-item{background:rgba(255,255,255,0.1); border-left-color:rgba(255,255,255,0.3)}
+.comunidad-layout{display:grid; grid-template-columns:70fr 30fr; gap:48px; align-items:center}
+.comunidad-layout.reverse{grid-template-columns:30fr 70fr}
+.comunidad-content h2{margin-top:0; margin-bottom:20px; font-size:1.8rem; line-height:1.3}
+.comunidad-content h3{margin-top:24px; margin-bottom:12px; font-size:1.2rem; color:var(--accent)}
+.comunidad-content p{margin-bottom:16px; line-height:1.8; font-size:1.05rem}
+.comunidad-item{background:rgba(255,255,255,0.15); padding:20px; border-radius:12px; margin-bottom:16px; border-left:4px solid rgba(255,255,255,0.4)}
+.comunidad-item h3{margin-top:0; margin-bottom:8px; font-size:1.1rem}
+.comunidad-item p{margin-bottom:0; font-size:1rem}
+.comunidad-list{list-style:none; padding:0; margin:16px 0; display:flex; flex-direction:column; gap:12px}
+.comunidad-list li{padding-left:0; line-height:1.7; font-size:1.05rem}
+.ceremonias-list li{margin-bottom:8px}
+.comunidad-highlight{font-style:italic; color:var(--accent); font-weight:500; background:rgba(184,92,60,0.08); padding:14px; border-radius:8px; margin:20px 0}
+.comunidad-image{display:flex; align-items:center; justify-content:center}
+.comunidad-image .image-placeholder{width:100%; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:8rem; background:rgba(255,255,255,0.1); border-radius:20px; border:3px dashed rgba(255,255,255,0.3)}
+.section-alt .comunidad-content h2, .section-alt .comunidad-content h3, .section-alt .comunidad-content p, .section-alt .comunidad-list li{color:var(--text-light)}
+.section-alt .comunidad-item{background:rgba(255,255,255,0.1); border-left-color:rgba(255,255,255,0.3)}
+.section-alt2 .comunidad-content h2, .section-alt2 .comunidad-content h3, .section-alt2 .comunidad-content p, .section-alt2 .comunidad-list li{color:var(--text-light)}
+.section-alt2 .comunidad-highlight{color:var(--text-light); background:rgba(255,255,255,0.15)}
+
+/* Antroponómadas */
+.antroponomadas-content{max-width:75ch; margin:0 auto}
+.antroponomadas-content p{font-size:1.05rem; line-height:1.8; margin-bottom:24px}
+.cta-highlight{font-weight:500; color:var(--accent); background:rgba(0,0,0,0.03); padding:20px; border-left:3px solid var(--accent); border-radius:8px}
+
+/* Footer */
+.site-footer{border-top:1px solid var(--line); padding:24px 0; color:var(--muted)}
+.footer-inner{display:flex; align-items:center; justify-content:space-between}
+.footer-links{display:flex; gap:16px}
+.footer-links a{color:inherit; text-decoration:none}
+.footer-links a:hover{color:var(--text)}
+
+/* Responsive */
+/* Prevenir overflow horizontal en todas las resoluciones */
+html, body{
+  overflow-x:hidden;
+  max-width:100vw;
+}
+
+@media (max-width: 960px){
+  .hero-layout{grid-template-columns:1fr; gap:32px}
+  .cards{grid-template-columns:1fr 1fr}
+  .gallery{grid-template-columns:1fr 1fr}
+  .about{grid-template-columns:1fr}
+  .contact{grid-template-columns:1fr}
+  .bio-layout{grid-template-columns:1fr; gap:24px; text-align:center}
+  .bio-icon{margin:0 auto}
+  .comunidad-layout{grid-template-columns:1fr; gap:32px}
+  .comunidad-layout.reverse{grid-template-columns:1fr}
+  .comunidad-image .image-placeholder{font-size:5rem; max-height:300px}
+}
+
+@media (max-width: 720px){
+  /* Navegación móvil */
+  .menu-toggle{display:inline-flex; align-items:center; gap:6px; padding:8px 12px; border-radius:999px; border:1px solid var(--text-light); background:transparent; color:var(--text-light)}
+  .site-nav{display:none; position:absolute; right:4%; top:58px; background:var(--bg-alt); border:1px solid var(--line); border-radius:12px; padding:8px 6px}
+  .site-nav.open{display:block}
+  .site-nav ul{flex-direction:column; gap:0}
+  .site-nav li{border-bottom:1px solid rgba(255,255,255,0.2)}
+  .site-nav li:last-child{border-bottom:none}
+  .site-nav a{display:block; padding:10px 14px}
+  
+  /* Ajustes generales */
+  .section{padding:48px 0}
+  .comunidad-section{padding:48px 0}
+  .container{width:min(1100px, 90%)}
+  
+  /* Hero */
+  .hero{padding:64px 0 48px}
+  .hero-layout{gap:24px}
+  .hero-right{font-size:1.2rem}
+  
+  /* Cards en una columna */
+  .cards{grid-template-columns:1fr}
+  .gallery{grid-template-columns:1fr}
+  
+  /* Terapias grid */
+  .therapies-grid{grid-template-columns:1fr; gap:16px}
+  
+  /* Bio layout */
+  .bio-layout{grid-template-columns:1fr; gap:20px}
+  .bio-layout.wide-content{grid-template-columns:1fr}
+  .bio-layout.reverse{grid-template-columns:1fr}
+  .bio-icon svg{width:60px; height:60px}
+  
+  /* Comunidad */
+  .comunidad-layout{grid-template-columns:1fr; gap:24px}
+  .comunidad-layout.reverse{grid-template-columns:1fr}
+  .comunidad-content h2{font-size:1.5rem}
+  .comunidad-image .image-placeholder{font-size:4rem; max-height:250px}
+  
+  /* Modal responsive */
+  .therapy-modal-content{width:95%; margin:10px}
+  .therapy-modal-body{padding:32px 20px}
+  
+  /* Nota importante */
+  .nota-importante{padding:24px}
+  
+  /* Theme selector */
+  .theme-selector{bottom:16px; right:16px}
+  .theme-toggle{width:44px; height:44px}
+  .theme-panel{width:260px; right:-8px}
+  
+  /* Footer responsive */
+  .footer-inner{flex-direction:column; gap:16px; text-align:center}
+  .footer-links{flex-wrap:wrap; justify-content:center; gap:12px}
+}
+
+@media (max-width: 480px){
+  /* Ajustes para pantallas muy pequeñas (iPhone 13 mini) */
+  body{font-size:1rem}
+  .container{width:min(1100px, 88%)}
+  
+  /* Hero */
+  .hero-right{font-size:1.1rem}
+  .hero-quote{font-size:1rem}
+  
+  /* Comunidad */
+  .comunidad-content h2{font-size:1.3rem}
+  .comunidad-content p{font-size:1rem}
+  .comunidad-image .image-placeholder{font-size:3rem; max-height:200px}
+  
+  /* Reducir padding en secciones */
+  .section{padding:40px 0}
+  .comunidad-section{padding:40px 0}
+  
+  /* Cards más compactas */
+  .card{padding:20px}
+  .card-expanded{padding:24px}
+  
+  /* Theme panel más pequeño */
+  .theme-panel{width:240px; padding:16px}
+  
+  /* Footer más compacto */
+  .site-footer{padding:20px 0}
+  .footer-links{font-size:0.9rem; gap:10px}
+}

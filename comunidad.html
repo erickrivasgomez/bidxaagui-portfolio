@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Comunidad – BIDXAAGUI</title>
+    <meta name="description" content="Recursos, artículos y guías prácticas de medicina naturista.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Saltar al contenido</a>
+
+    <!-- Color Customizer -->
+    <div class="theme-selector" id="themeSelector">
+      <button class="theme-toggle" id="themeToggle" aria-label="Personalizar colores">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M12 2a7 7 0 1 0 10 10"></path>
+        </svg>
+      </button>
+      <div class="theme-panel" id="themePanel">
+        <h3>Personalizar colores</h3>
+        
+        <div class="preset-buttons">
+          <button class="preset-btn" data-preset="sage">Salvia</button>
+          <button class="preset-btn" data-preset="terracotta">Terracota</button>
+          <button class="preset-btn" data-preset="lavender">Lavanda</button>
+          <button class="preset-btn" data-preset="ocean">Océano</button>
+          <button class="preset-btn" data-preset="sand">Arena</button>
+          <button class="preset-btn" data-preset="rose">Rosa</button>
+        </div>
+
+        <div class="color-controls">
+          <div class="color-control">
+            <label for="colorBg">Fondo principal</label>
+            <input type="color" id="colorBg" value="#faf7f0" />
+          </div>
+          <div class="color-control">
+            <label for="colorBgAlt">Fondo alternativo</label>
+            <input type="color" id="colorBgAlt" value="#e8e6d8" />
+          </div>
+          <div class="color-control">
+            <label for="colorText">Texto primario</label>
+            <input type="color" id="colorText" value="#4a5239" />
+          </div>
+          <div class="color-control">
+            <label for="colorMuted">Texto secundario</label>
+            <input type="color" id="colorMuted" value="#7a8264" />
+          </div>
+          <div class="color-control">
+            <label for="colorAccent">Acento</label>
+            <input type="color" id="colorAccent" value="#b85c3c" />
+          </div>
+          <div class="color-control">
+            <label for="colorCard">Tarjetas</label>
+            <input type="color" id="colorCard" value="#ffffff" />
+          </div>
+          <div class="color-control">
+            <label for="colorLine">Bordes</label>
+            <input type="color" id="colorLine" value="#d4b5a8" />
+          </div>
+        </div>
+
+        <button class="reset-btn" id="resetColors">Restaurar predeterminado</button>
+      </div>
+    </div>
+
+    <header class="site-header" role="banner">
+      <div class="container header-inner">
+        <a href="index.html" class="brand" aria-label="BIDXAAGUI Home">
+          <img src="assets/images/downloads/logo-blanco-2.jpg" alt="BIDXAAGUI Logo" class="brand-logo">
+          BIDXAAGUI
+        </a>
+        <button class="menu-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+        <nav id="site-nav" class="site-nav" role="navigation">
+          <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="antropologia-fisica.html">Antropología Biológica</a></li>
+            <li><a href="consultorio.html">Consultorio</a></li>
+            <li><a href="comunidad.html">Comunidad</a></li>
+            <li><a href="antroponomadas.html">Antroponómadas</a></li>
+            <li><a href="https://www.instagram.com/bidxaagui/" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- Introducción -->
+      <section class="section">
+        <div class="container">
+          <div class="section-head">
+            <h1>Comunidad</h1>
+          </div>
+          <div class="comunidad-intro">
+            <p>Bidxaa Gui esta pensado como un proyecto en comunidad donde tejido, sanación, aprendizaje y exploración diversa se unen para crear espacios seguros y colectivos. Los saberes ancestrales y las experiencias compartidas se conectan, invitándote a ser parte de un aprendizaje que nutre cuerpo, mente y comunidad.</p>
+            <p class="highlight-text">✨ Participa: ¿Qué tipo de exploración o aprendizaje te gustaría vivir con nosotros?</p>
+            <p>La comunidad Bidxaa Gui se ha ido formando a través de colegas, talleres, círculos y amistades, creando espacios donde la escucha, la meditación y las prácticas culturales se exploran y se comparten de manera segura y colectiva.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Círculos y Talleres presenciales -->
+      <section class="section comunidad-section talleres-section">
+        <div class="container comunidad-layout">
+          <div class="comunidad-content">
+            <h2>Círculos y Talleres presenciales</h2>
+            <p>Espacios para conectarte contigo misma y con otras personas, explorar tu creatividad, compartir experiencias y participar en prácticas de sanación y crecimiento personal.</p>
+            
+            <div class="comunidad-item">
+              <h3>Taller de Arteterapia y Café</h3>
+              <p>Un encuentro donde el arte se convierte en herramienta de autoconocimiento mientras disfrutas de un momento cálido y relajado con café. Ideal para liberar emociones y reconectar con tu creatividad.</p>
+              <p style="margin-top: 8px; font-size: 0.95rem; opacity: 0.9;">✨ Colabora: <a href="https://www.instagram.com/quantum.atelier" target="_blank" rel="noopener" style="color: inherit; font-weight: 600;">@quantum.atelier</a></p>
+            </div>
+
+            <div class="comunidad-item">
+              <h3>Círculos de Cacao y Yoga</h3>
+              <p>Un espacio para armonizar cuerpo, mente y espíritu, combinando la meditación guiada con el yoga suave y la energía sanadora del cacao. Una experiencia sensorial y transformadora.</p>
+              <p style="margin-top: 8px; font-size: 0.95rem; opacity: 0.9;">✨ Colabora: <a href="https://www.instagram.com/masyogaconsciente_" target="_blank" rel="noopener" style="color: inherit; font-weight: 600;">@masyogaconsciente_</a></p>
+            </div>
+
+            <div class="comunidad-item">
+              <h3>Círculo de Fin de Año</h3>
+              <p>Un momento para reflexionar sobre el año que termina, agradecer los aprendizajes, soltar lo que ya no sirve y sembrar intenciones para el año que comienza, en comunidad y con rituales de conexión profunda.</p>
+            </div>
+          </div>
+          <div class="comunidad-image">
+            <div class="image-placeholder">🧘‍♀️</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Carpas Rojas -->
+      <section class="section comunidad-section">
+        <div class="container comunidad-layout reverse">
+          <div class="comunidad-image">
+            <div class="image-placeholder">🌸</div>
+          </div>
+          <div class="comunidad-content">
+            <h2>🌸 Carpas Rojas: Espacios de Sabiduría Femenina y Sanación Colectiva</h2>
+            <p>Las Carpas Rojas son círculos de mujeres inspirados en tradiciones ancestrales que ofrecen un espacio sagrado para compartir, sanar y celebrar la feminidad. En estos encuentros, se integran prácticas como el cacao ceremonial, la ginecología menstrual consciente y el acompañamiento emocional, creando un ambiente de sororidad y empoderamiento.</p>
+            
+            <h3>✨ ¿Qué se vive en una Carpa Roja?</h3>
+            <ul class="comunidad-list">
+              <li><strong>Rituales de conexión:</strong> Ceremonias que incluyen meditaciones, cantos y prácticas de sanación.</li>
+              <li><strong>Educación menstrual consciente:</strong> Información sobre el ciclo menstrual, salud ginecológica y bienestar integral.</li>
+              <li><strong>Acompañamiento colectivo:</strong> Espacios para compartir experiencias, emociones y procesos personales en un entorno de confianza.</li>
+              <li><strong>Uso del cacao ceremonial:</strong> Bebida sagrada que facilita la apertura del corazón y la conexión profunda con uno mismo y con las demás.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Círculos virtuales gratuitos -->
+      <section class="section section-alt2 comunidad-section">
+        <div class="container comunidad-layout">
+          <div class="comunidad-content">
+            <h2>Círculos virtuales gratuitos</h2>
+            <p>Espacios abiertos y accesibles donde puedes conectarte desde cualquier lugar, compartir experiencias, explorar tu bienestar y participar en prácticas de meditación, escucha activa y desarrollo personal, todo dentro de un entorno seguro y colectivo.</p>
+            <p class="comunidad-highlight">✨ Participa: ¿Qué tema o práctica te gustaría explorar en nuestros círculos virtuales?</p>
+          </div>
+          <div class="comunidad-image">
+            <div class="image-placeholder">💻</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bazarcitas -->
+      <section class="section comunidad-section">
+        <div class="container comunidad-layout reverse">
+          <div class="comunidad-image">
+            <div class="image-placeholder">🛍️</div>
+          </div>
+          <div class="comunidad-content">
+            <h2>Bazarcitas</h2>
+            <p>Los bazares femeninos son espacios de encuentro, creatividad y resistencia colectiva. Más que comercio, son lugares donde se comparten saberes, se sostiene la comunidad y se impulsa la autonomía económica y emocional de las mujeres. Participar en un bazar es reconectar con la tradición, honrar nuestras ancestras y celebrar lo local, artesanal y sanador, fortaleciendo vínculos y construyendo comunidad.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Ceremonias Holísticas -->
+      <section class="section section-alt comunidad-section">
+        <div class="container comunidad-layout">
+          <div class="comunidad-content">
+            <h2>Ceremonias Holísticas</h2>
+            <p>Espacios sagrados donde la intención, la conexión y la sanación se entrelazan para celebrar la vida, los vínculos y los momentos importantes. Cada ceremonia es un ritual consciente que honra tu historia, tu cuerpo y tus emociones.</p>
+            
+            <h3>✨ ¿Qué ceremonias manejamos? ✨</h3>
+            <ul class="comunidad-list ceremonias-list">
+              <li>🌞 <strong>Vuelta al sol</strong> – Celebra tu año de vida con un ritual consciente y lleno de intención.</li>
+              <li>💍 <strong>Despedida de soltera</strong> – Un espacio sagrado para honrar tu transición hacia una nueva etapa.</li>
+              <li>🕊 <strong>Despedida de un ser querido o mascota</strong> – Un ritual de amor y sanación para cerrar ciclos.</li>
+              <li>❤ <strong>Aniversario de pareja o amistad</strong> – Fortalece los lazos y celebra la conexión con seres especiales.</li>
+              <li>🌸 <strong>Ceremonia personal</strong> – De amor propio, renacimiento, intención o la temática que tú elijas.</li>
+            </ul>
+            <p class="comunidad-highlight">✨ Y cualquier ceremonia que imagines… la podemos personalizar para cualquier fecha o momento especial de tu vida.</p>
+          </div>
+          <div class="comunidad-image">
+            <div class="image-placeholder">🕯️</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+      <div class="container footer-inner">
+        <div>© <span id="year"></span> BIDXAAGUI</div>
+        <div class="footer-links">
+          <a href="index.html">Inicio</a>
+          <a href="antropologia-fisica.html">Antropología Biológica</a>
+          <a href="consultorio.html">Consultorio</a>
+          <a href="comunidad.html">Comunidad</a>
+          <a href="antroponomadas.html">Antroponómadas</a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

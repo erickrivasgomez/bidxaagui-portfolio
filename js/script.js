@@ -12,6 +12,43 @@ if (toggle && nav){
   });
 }
 
+// Instagram Dropdown Toggle
+const instagramToggle = document.querySelector('.instagram-toggle');
+const instagramMenu = document.querySelector('.instagram-menu');
+
+if (instagramToggle && instagramMenu) {
+  // Toggle menu on click for mobile
+  instagramToggle.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768) {
+      e.preventDefault();
+      const isExpanded = instagramToggle.getAttribute('aria-expanded') === 'true';
+      instagramToggle.setAttribute('aria-expanded', String(!isExpanded));
+      instagramMenu.classList.toggle('active');
+    }
+  });
+
+  // Close menu when clicking outside on desktop
+  document.addEventListener('click', (e) => {
+    if (window.innerWidth > 768 && 
+        !instagramToggle.contains(e.target) && 
+        !instagramMenu.contains(e.target)) {
+      instagramToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // Handle window resize
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (window.innerWidth > 768) {
+        instagramMenu.classList.remove('active');
+        instagramToggle.setAttribute('aria-expanded', 'false');
+      }
+    }, 250);
+  });
+}
+
 // Color Customizer
 const themeToggle = document.getElementById('themeToggle');
 const themePanel = document.getElementById('themePanel');

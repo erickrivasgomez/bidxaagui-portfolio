@@ -1,158 +1,193 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Antroponómadas – BIDXAAGUI</title>
-    <meta name="description" content="Revista digital de antropología, escritura y creatividad.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/styles.css" />
-    <link rel="stylesheet" href="../css/buttons.css" />
-    <link rel="stylesheet" href="../css/scroll-animations.css" />
-  </head>
-  <body>
-    <a class="skip-link" href="#main">Saltar al contenido</a>
 
-    <!-- Color Customizer -->
-    <div class="theme-selector" id="themeSelector">
-      <button class="theme-toggle" id="themeToggle" aria-label="Personalizar colores">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"></circle>
-          <path d="M12 2a7 7 0 1 0 10 10"></path>
-        </svg>
-      </button>
-      <div class="theme-panel" id="themePanel">
-        <h3>Personalizar colores</h3>
-        
-        <div class="preset-buttons">
-          <button class="preset-btn" data-preset="sage">Salvia</button>
-          <button class="preset-btn" data-preset="terracotta">Terracota</button>
-          <button class="preset-btn" data-preset="lavender">Lavanda</button>
-          <button class="preset-btn" data-preset="ocean">Océano</button>
-          <button class="preset-btn" data-preset="sand">Arena</button>
-          <button class="preset-btn" data-preset="rose">Rosa</button>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BIDXAAGUI – Medicina Naturista</title>
+  <meta name="description" content="Revista digital de antropología, escritura y creatividad.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Saltar al contenido</a>
+  <div class="theme-selector" id="themeSelector">
+    <button class="theme-toggle" id="themeToggle" aria-label="Personalizar colores">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 2a7 7 0 1 0 10 10"></path>
+      </svg>
+    </button>
+    <div class="theme-panel" id="themePanel">
+      <h3>Personalizar colores</h3>
+
+      <div class="preset-buttons">
+        <button class="preset-btn" data-preset="sage">Salvia</button>
+        <button class="preset-btn" data-preset="terracotta">Terracota</button>
+        <button class="preset-btn" data-preset="lavender">Lavanda</button>
+        <button class="preset-btn" data-preset="ocean">Océano</button>
+        <button class="preset-btn" data-preset="sand">Arena</button>
+        <button class="preset-btn" data-preset="rose">Rosa</button>
+      </div>
+
+      <div class="color-controls">
+        <div class="color-control">
+          <label for="colorBg">Fondo principal</label>
+          <input type="color" id="colorBg" value="#faf7f0" />
         </div>
+        <div class="color-control">
+          <label for="colorBgAlt">Fondo alternativo</label>
+          <input type="color" id="colorBgAlt" value="#e8e6d8" />
+        </div>
+        <div class="color-control">
+          <label for="colorText">Texto primario</label>
+          <input type="color" id="colorText" value="#4a5239" />
+        </div>
+        <div class="color-control">
+          <label for="colorMuted">Texto secundario</label>
+          <input type="color" id="colorMuted" value="#7a8264" />
+        </div>
+        <div class="color-control">
+          <label for="colorAccent">Acento</label>
+          <input type="color" id="colorAccent" value="#b85c3c" />
+        </div>
+        <div class="color-control">
+          <label for="colorCard">Tarjetas</label>
+          <input type="color" id="colorCard" value="#ffffff" />
+        </div>
+        <div class="color-control">
+          <label for="colorLine">Bordes</label>
+          <input type="color" id="colorLine" value="#d4b5a8" />
+        </div>
+      </div>
 
-        <div class="color-controls">
-          <div class="color-control">
-            <label for="colorBg">Fondo principal</label>
-            <input type="color" id="colorBg" value="#faf7f0" />
-          </div>
-          <div class="color-control">
-            <label for="colorBgAlt">Fondo alternativo</label>
-            <input type="color" id="colorBgAlt" value="#e8e6d8" />
-          </div>
-          <div class="color-control">
-            <label for="colorText">Texto primario</label>
-            <input type="color" id="colorText" value="#4a5239" />
-          </div>
-          <div class="color-control">
-            <label for="colorMuted">Texto secundario</label>
-            <input type="color" id="colorMuted" value="#7a8264" />
-          </div>
-          <div class="color-control">
-            <label for="colorAccent">Acento</label>
-            <input type="color" id="colorAccent" value="#b85c3c" />
-          </div>
-          <div class="color-control">
-            <label for="colorCard">Tarjetas</label>
-            <input type="color" id="colorCard" value="#ffffff" />
-          </div>
-          <div class="color-control">
-            <label for="colorLine">Bordes</label>
-            <input type="color" id="colorLine" value="#d4b5a8" />
+      <button class="reset-btn" id="resetColors">Restaurar predeterminado</button>
+    </div>
+  </div>
+
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a href="../index.html" class="brand" aria-label="BIDXAAGUI Home">
+        <img src="../assets/images/downloads/logo-transparente.png" alt="BIDXAAGUI Logo" class="brand-logo">
+        BIDXAAGUI
+      </a>
+      <button class="menu-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      <nav id="site-nav" class="site-nav" role="navigation">
+        <ul>
+          <li><a href="../index.html">Inicio</a></li>
+          <li><a href="antropologia-fisica.html">Antropología Biológica</a></li>
+          <li><a href="consultorio.html">Consultorio</a></li>
+          <li><a href="comunidad.html">Comunidad</a></li>
+          <li><a href="antroponomadas.html">Antroponómadas</a></li>
+          <li><a href="https://www.instagram.com/bidxaagui/" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+              </svg>
+            </a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" style="margin-top: 74px;">
+    <section class="section" style="padding: 0; margin-top: 0;">
+      <div class="scroll-animate"
+        style="position: relative; padding: 40px 0 60px; margin: -74px 0 32px; overflow: hidden;">
+        <div
+          style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('../../assets/images/welcome-bg.jpg') no-repeat center center; background-size: cover; background-attachment: fixed; z-index: -1;">
+        </div>
+        <div
+          style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); z-index: -1;">
+        </div>
+        <div class="container">
+          <h1 style="margin: 0 0 16px 0; color: #fff; display: block; padding: 10px 20px; border-radius: 8px;">
+            Antroponómadas
+          </h1>
+          <div style="margin-top: 32px;margin-bottom: 16px;">
+            <a href="https://forms.gle/yyt7uG6QqtBu8hTdA" target="_blank" rel="noopener"
+              class="btn btn-green btn-animated">Participar en la próxima edición</a>
           </div>
         </div>
+      </div>
+      <div class="container">
 
-        <button class="reset-btn" id="resetColors">Restaurar predeterminado</button>
+        <div class="antroponomadas-content scroll-animate">
+          <p>Antroponómadas nace como un proyecto colectivo con la finalidad de dar voz a las palabras hispanohablantes
+            que tejen, crean y resisten a través de los sentipensares antropológicos y orgánicos.</p>
+
+          <ul class="feature-list">
+            <li data-icon="seedling">
+              <strong>Colectiva y Horizontal</strong>
+              <p>Promueve el trabajo colaborativo y el intercambio entre voces diversas del ámbito antropológico, artístico y literario.</p>
+            </li>
+            <li data-icon="leaf">
+              <strong>Interdisciplinaria</strong>
+              <p>Integra textos, arte visual y reflexiones desde distintas áreas del conocimiento y la creación.</p>
+            </li>
+            <li data-icon="globe-americas"><strong>Latinoamericana e hispanohablante</strong></li>
+            <li data-icon="heart">
+              <strong>Orgánica y Sentipensante</strong>
+              <p>Funde emoción y pensamiento, cuerpo y palabra, para explorar la experiencia humana desde lo sensible.</p>
+            </li>
+            <li data-icon="fist-raised">
+              <strong>Crítica y Resistente</strong>
+              <p>Cuestiona las estructuras dominantes y visibiliza formas alternativas de entender la cultura, la comunidad y el saber.</p>
+            </li>
+            <li data-icon="users">
+              <strong>Comunitaria y Viva</strong>
+              <p>Busca fortalecer el tejido social a través de la palabra, el arte y la memoria colectiva.</p>
+            </li>
+          </ul>
+            
+          <p>💡 También es un lugar para morritas emprendedoras que quieran dar a conocer sus proyectos y compartirlos</p>
+          <p class="cta-highlight">Si te gustaría formar parte de la próxima edición, accede al link para dejarnos tus
+            datos y tu propuesta, así como para consultar las reglas y especificaciones.</p>
+            
+          </div>
+          <div style="margin-top: 32px; margin-bottom: 16px; text-align: center;">
+            <a href="https://www.instagram.com/antroponomadas_2025revd/" target="_blank" rel="noopener" class="btn btn-green btn-animated">
+              <i class="fab fa-instagram" style="margin-right: 8px;"></i>
+              Revisa nuestras ediciones anteriores y síguenos en Instagram: @antroponomadas_2025revd
+            </a>
+          </div>
+      </div>
+    </section>
+
+    <section class="section section-alt">
+      <div class="container">
+        <h2>Ediciones anteriores</h2>
+        <div class="grid gallery">
+          <a class="gallery-item" href="#"><span>Edición 1</span></a>
+          <a class="gallery-item" href="#"><span>Edición 2</span></a>
+          <a class="gallery-item" href="#"><span>Edición 3</span></a>
+          <a class="gallery-item" href="#"><span>Próximamente</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <div>© <span id="year"></span> BIDXAAGUI</div>
+      <div class="footer-links">
+        <a href="../index.html">Inicio</a>
+        <a href="antropologia-fisica.html">Antropología Biológica</a>
+        <a href="consultorio.html">Consultorio</a>
+        <a href="comunidad.html">Comunidad</a>
+        <a href="antroponomadas.html">Antroponómadas</a>
       </div>
     </div>
+  </footer>
 
-    <header class="site-header" role="banner">
-      <div class="container header-inner">
-        <a href="../index.html" class="brand" aria-label="BIDXAAGUI Home">
-          <img src="../assets/images/downloads/logo-transparente.png" alt="BIDXAAGUI Logo" class="brand-logo">
-          BIDXAAGUI
-        </a>
-        <button class="menu-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
-        <nav id="site-nav" class="site-nav" role="navigation">
-          <ul>
-            <li><a href="../index.html">Inicio</a></li>
-            <li><a href="antropologia-fisica.html">Antropología Biológica</a></li>
-            <li><a href="consultorio.html">Consultorio</a></li>
-            <li><a href="comunidad.html">Comunidad</a></li>
-            <li><a href="antroponomadas.html">Antroponómadas</a></li>
-            <li><a href="https://www.instagram.com/bidxaagui/" target="_blank" rel="noopener" aria-label="Instagram">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-            </a></li>
-          </ul>
-        </nav>
-      </div>
-    </header>
+  <script src="../js/script.js"></script>
+  <script src="../js/scroll-animations.js"></script>
+</body>
 
-    <main id="main" style="margin-top: 74px;">
-      <section class="section" style="padding: 0; margin-top: 0;">
-        <div class="scroll-animate" style="position: relative; padding: 40px 0 60px; margin: -74px 0 32px; overflow: hidden;">
-          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('../../assets/images/welcome-bg.jpg') no-repeat center center; background-size: cover; background-attachment: fixed; z-index: -1;"></div>
-          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); z-index: -1;"></div>
-          <div class="container">
-            <h1 style="margin: 0 0 16px 0; color: #fff; display: block; padding: 10px 20px; border-radius: 8px;">
-              Antroponómadas
-            </h1>
-            <div style="margin-top: 32px;margin-bottom: 16px;">
-              <a href="https://forms.gle/aFsgTqTa5Yiw8EVS6" target="_blank" rel="noopener" class="btn btn-primary btn-animated">Participar en la próxima edición</a>
-            </div>
-          </div>
-        </div>
-        <div class="container">
-          
-          <div class="antroponomadas-content scroll-animate">
-            <p>✍️ Antroponómadas es una revista digital que nace de la necesidad de explorar la escritura y de desenmascarar a la antropóloga que todas llevamos dentro.<br>
-Es un espacio seguro y amigable para desatar la creatividad, pero también la investigación y los sentipensares que observan, comparten y crean.</p>
-
-            <p>📝 Busca dar visibilidad a nuevas voces y mentes creativas hispanohablantes, sin importar la trayectoria.<br>
-💡 También es un lugar para morritas emprendedoras que quieran dar a conocer sus proyectos y compartirlos con la comunidad.</p>
-
-            <p>🌈 La revista será mensual y forma parte de un proyecto amoroso, diverso, inclusivo y comunitario, que apuesta por crear, compartir y tejer redes desde las múltiples aristas de la diversidad.</p>
-
-            <p class="cta-highlight">Si te gustaría formar parte de la próxima edición, accede al link para dejarnos tus datos y tu propuesta, así como para consultar las reglas y especificaciones.</p>
-
-            <div style="margin-top: 32px; margin-bottom: 16px; text-align: center;">
-              <a href="https://forms.gle/aFsgTqTa5Yiw8EVS6" target="_blank" rel="noopener" class="btn btn-primary btn-animated">Participar en la próxima edición</a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section section-alt">
-        <div class="container">
-          <h2>Ediciones anteriores</h2>
-          <div class="grid gallery">
-            <a class="gallery-item" href="#"><span>Edición 1</span></a>
-            <a class="gallery-item" href="#"><span>Edición 2</span></a>
-            <a class="gallery-item" href="#"><span>Edición 3</span></a>
-            <a class="gallery-item" href="#"><span>Próximamente</span></a>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="site-footer" role="contentinfo">
-      <div class="container footer-inner">
-        <div>© <span id="year"></span> BIDXAAGUI</div>
-        <div class="footer-links">
-          <a href="../index.html">Inicio</a>
-          <a href="antropologia-fisica.html">Antropología Biológica</a>
-          <a href="consultorio.html">Consultorio</a>
-          <a href="comunidad.html">Comunidad</a>
-          <a href="antroponomadas.html">Antroponómadas</a>
-        </div>
-      </div>
-    </footer>
-
-    <script src="../js/script.js"></script>
-    <script src="../js/scroll-animations.js"></script>
-  </body>
 </html>

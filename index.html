@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
@@ -82,9 +83,33 @@
             <li><a href="pages/consultorio.html">Consultorio</a></li>
             <li><a href="pages/comunidad.html">Comunidad</a></li>
             <li><a href="pages/antroponomadas.html">Antroponómadas</a></li>
-            <li><a href="https://www.instagram.com/bidxaagui/" target="_blank" rel="noopener" aria-label="Instagram">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-            </a></li>
+            <li class="instagram-dropdown">
+              <a href="#" class="instagram-toggle" aria-label="Instagram" aria-expanded="false">
+                <i class="fab fa-instagram"></i>
+              </a>
+              <ul class="instagram-menu">
+                <li>
+                  <a href="https://www.instagram.com/bidxaagui/" target="_blank" rel="noopener">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                    </svg>
+                    @bidxaagui
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.instagram.com/antroponomadas_2025revd/" target="_blank" rel="noopener">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                    </svg>
+                    @antroponomadas_2025revd
+                  </a>
+                </li>
+              </ul>
+            </li>
           </ul>
         </nav>
       </div>
@@ -103,14 +128,14 @@
       <section id="home" class="hero">
         <div class="container hero-layout">
           <div class="hero-left">
-            <div class="hero-image offset-image">
+            <div class="hero-image offset-image animate-on-scroll">
               <img src="assets/images/profile.jpg" alt="Fundadora de BIDXAAGUI" />
             </div>
             <blockquote class="hero-quote">
               Habitar la salud es un camino personal y colectivo. Equilibrar cuerpo, mente y energía es una elección cotidiana.<br>
               Si te gustaría acceder a algún tratamiento naturista, rehabitar tu ciclicidad y armonizar tu cuerpo en un espacio seguro y amoroso <a href="consultorio.html">contáctame</a>.</blockquote>
           </div>
-          <div class="hero-right">
+          <div class="hero-right animate-on-scroll">
             <h1 style="margin-bottom: 24px;">Sobre mí</h1>
             <p>Soy Nancy Sav,<br> antropóloga física,<br> mujer medicina,<br> exploradora del cuerpo - energía,<br> y facilitadora de espacios de conexión.</p>
           </div>
@@ -222,5 +247,6 @@
     </footer>
 
     <script src="js/script.js"></script>
+    <script src="js/index-animations.js"></script>
   </body>
 </html>

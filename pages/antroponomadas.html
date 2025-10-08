@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/buttons.css" />
+    <link rel="stylesheet" href="../css/scroll-animations.css" />
   </head>
   <body>
     <a class="skip-link" href="#main">Saltar al contenido</a>
@@ -92,7 +94,7 @@
 
     <main id="main" style="margin-top: 74px;">
       <section class="section" style="padding: 0; margin-top: 0;">
-        <div style="position: relative; padding: 40px 0 60px; margin: -74px 0 32px; overflow: hidden;">
+        <div class="scroll-animate" style="position: relative; padding: 40px 0 60px; margin: -74px 0 32px; overflow: hidden;">
           <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('../../assets/images/welcome-bg.jpg') no-repeat center center; background-size: cover; background-attachment: fixed; z-index: -1;"></div>
           <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); z-index: -1;"></div>
           <div class="container">
@@ -100,13 +102,13 @@
               Antroponómadas
             </h1>
             <div style="margin-top: 32px;margin-bottom: 16px;">
-              <a href="https://forms.gle/aFsgTqTa5Yiw8EVS6" target="_blank" rel="noopener" class="btn btn-primary">Participar en la próxima edición</a>
+              <a href="https://forms.gle/aFsgTqTa5Yiw8EVS6" target="_blank" rel="noopener" class="btn btn-primary btn-animated">Participar en la próxima edición</a>
             </div>
           </div>
         </div>
         <div class="container">
           
-          <div class="antroponomadas-content">
+          <div class="antroponomadas-content scroll-animate">
             <p>✍️ Antroponómadas es una revista digital que nace de la necesidad de explorar la escritura y de desenmascarar a la antropóloga que todas llevamos dentro.<br>
 Es un espacio seguro y amigable para desatar la creatividad, pero también la investigación y los sentipensares que observan, comparten y crean.</p>
 
@@ -117,8 +119,8 @@ Es un espacio seguro y amigable para desatar la creatividad, pero también la in
 
             <p class="cta-highlight">Si te gustaría formar parte de la próxima edición, accede al link para dejarnos tus datos y tu propuesta, así como para consultar las reglas y especificaciones.</p>
 
-            <div style="margin-top: 32px; margin-bottom: 16px;">
-              <a href="https://forms.gle/aFsgTqTa5Yiw8EVS6" target="_blank" rel="noopener" class="btn btn-primary">Participar en la próxima edición</a>
+            <div style="margin-top: 32px; margin-bottom: 16px; text-align: center;">
+              <a href="https://forms.gle/aFsgTqTa5Yiw8EVS6" target="_blank" rel="noopener" class="btn btn-primary btn-animated">Participar en la próxima edición</a>
             </div>
           </div>
         </div>
@@ -151,5 +153,6 @@ Es un espacio seguro y amigable para desatar la creatividad, pero también la in
     </footer>
 
     <script src="../js/script.js"></script>
+    <script src="../js/scroll-animations.js"></script>
   </body>
 </html>

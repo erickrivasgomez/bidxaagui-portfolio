@@ -3,18 +3,17 @@
 
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Comunidad – BIDXAAGUI</title>
   <meta name="description" content="Recursos, artículos y guías prácticas de medicina naturista.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/comunidad-animations.css" />
 </head>
 
 <body>
   <a class="skip-link" href="#main">Saltar al contenido</a>
-
   <!-- Color Customizer -->
   <div class="theme-selector" id="themeSelector">
     <button class="theme-toggle" id="themeToggle" aria-label="Personalizar colores">
@@ -101,7 +100,7 @@
     <!-- Introducción -->
     <section class="section">
       <div class="container">
-        <div class="section-head">
+        <div class="section-head animate-on-scroll" data-aos="fade-up">
           <h1>Comunidad</h1>
         </div>
         <div class="comunidad-intro">
@@ -125,22 +124,43 @@
           <p>Espacios para conectarte contigo misma y con otras personas, explorar tu creatividad, compartir
             experiencias y participar en prácticas de sanación y crecimiento personal.</p>
 
-          <div class="comunidad-item">
+          <div class="comunidad-item animate-on-scroll" data-aos="fade-up">
             <h3>Taller de Arteterapia y Café</h3>
             <p>Un encuentro donde el arte se convierte en herramienta de autoconocimiento mientras disfrutas de un
               momento cálido y relajado con café. Ideal para liberar emociones y reconectar con tu creatividad.</p>
             <p style="margin-top: 8px; font-size: 0.95rem; opacity: 0.9;">✨ Colabora: <a
                 href="https://www.instagram.com/quantum.atelier" target="_blank" rel="noopener"
                 style="color: inherit; font-weight: 600;">@quantum.atelier</a></p>
-            
+
             <div class="masonry-gallery" id="gallery-arteterapia" style="margin-top: 16px;">
-              <div class="masonry-item" data-index="0"><img src="../assets/images/downloads/circulos-01-arteterapia.jpg" alt="Arteterapia 1" loading="lazy"></div>
-              <div class="masonry-item" data-index="1"><img src="../assets/images/downloads/circulos-02-arteterapia.jpg" alt="Arteterapia 2" loading="lazy"></div>
-              <div class="masonry-item" data-index="2"><img src="../assets/images/downloads/circulos-03-arteterapia.jpg" alt="Arteterapia 3" loading="lazy"></div>
+              <div class="masonry-item" data-index="0">
+                <picture>
+                  <source type="image/webp"
+                    srcset="../assets/images/downloads/thumbnails/circulos-01-arteterapia.webp 1x, ../assets/images/downloads/fullres/circulos-01-arteterapia.webp 2x">
+                  <img src="../assets/images/downloads/thumbnails/circulos-01-arteterapia.webp" alt="Arteterapia 1"
+                    loading="lazy" width="300" height="300">
+                </picture>
+              </div>
+              <div class="masonry-item" data-index="1">
+                <picture>
+                  <source type="image/webp"
+                    srcset="../assets/images/downloads/thumbnails/circulos-02-arteterapia.webp 1x, ../assets/images/downloads/fullres/circulos-02-arteterapia.webp 2x">
+                  <img src="../assets/images/downloads/thumbnails/circulos-02-arteterapia.webp" alt="Arteterapia 2"
+                    loading="lazy" width="300" height="300">
+                </picture>
+              </div>
+              <div class="masonry-item" data-index="2">
+                <picture>
+                  <source type="image/webp"
+                    srcset="../assets/images/downloads/thumbnails/circulos-03-arteterapia.webp 1x, ../assets/images/downloads/fullres/circulos-03-arteterapia.webp 2x">
+                  <img src="../assets/images/downloads/thumbnails/circulos-03-arteterapia.webp" alt="Arteterapia 3"
+                    loading="lazy" width="300" height="300">
+                </picture>
+              </div>
             </div>
           </div>
 
-          <div class="comunidad-item">
+          <div class="comunidad-item animate-on-scroll" data-aos="fade-up">
             <h3>Círculos de Cacao y Yoga/Chi Kung</h3>
             <p>Un espacio para armonizar cuerpo, mente y espíritu, combinando yoga suave, chi kung y meditación guiada
               con la energía sanadora del cacao. Una experiencia sensorial y transformadora que nutre tu bienestar
@@ -150,16 +170,44 @@
             <p style="margin-top: 8px; font-size: 0.95rem; opacity: 0.9;">✨ Colabora: <a
                 href="https://www.instagram.com/masyogaconsciente_" target="_blank" rel="noopener"
                 style="color: inherit; font-weight: 600;">@masyogaconsciente_</a></p>
-            
+
             <div class="masonry-gallery" id="gallery-yoga" style="margin-top: 16px;">
-              <div class="masonry-item" data-index="0"><img src="../assets/images/downloads/circulos-09-yoga.jpg" alt="Yoga 1" loading="lazy"></div>
-              <div class="masonry-item" data-index="1"><img src="../assets/images/downloads/circulos-11-yoga.jpg" alt="Yoga 2" loading="lazy"></div>
-              <div class="masonry-item" data-index="2"><img src="../assets/images/downloads/circulos-12-yoga.jpg" alt="Yoga 3" loading="lazy"></div>
-              <div class="masonry-item" data-index="3"><img src="../assets/images/downloads/circulos-16-yoga.jpg" alt="Yoga 4" loading="lazy"></div>
+              <div class="masonry-item" data-index="0">
+                <picture>
+                  <source type="image/webp"
+                    srcset="../assets/images/downloads/thumbnails/circulos-09-yoga.webp 1x, ../assets/images/downloads/fullres/circulos-09-yoga.webp 2x">
+                  <img src="../assets/images/downloads/thumbnails/circulos-09-yoga.webp" alt="Yoga 1" loading="lazy"
+                    width="300" height="300">
+                </picture>
+              </div>
+              <div class="masonry-item" data-index="1">
+                <picture>
+                  <source type="image/webp"
+                    srcset="../assets/images/downloads/thumbnails/circulos-11-yoga.webp 1x, ../assets/images/downloads/fullres/circulos-11-yoga.webp 2x">
+                  <img src="../assets/images/downloads/thumbnails/circulos-11-yoga.webp" alt="Yoga 2" loading="lazy"
+                    width="300" height="300">
+                </picture>
+              </div>
+              <div class="masonry-item" data-index="2">
+                <picture>
+                  <source type="image/webp"
+                    srcset="../assets/images/downloads/thumbnails/circulos-12-yoga.webp 1x, ../assets/images/downloads/fullres/circulos-12-yoga.webp 2x">
+                  <img src="../assets/images/downloads/thumbnails/circulos-12-yoga.webp" alt="Yoga 3" loading="lazy"
+                    width="300" height="300">
+                </picture>
+              </div>
+              <div class="masonry-item" data-index="3">
+                <picture>
+                  <source type="image/webp"
+                    srcset="../assets/images/downloads/thumbnails/circulos-16-yoga.webp 1x, ../assets/images/downloads/fullres/circulos-16-yoga.webp 2x">
+                  <img src="../assets/images/downloads/thumbnails/circulos-16-yoga.webp" alt="Yoga 4" loading="lazy"
+                    width="300" height="300">
+                </picture>
+              </div>
             </div>
           </div>
 
-          <div class="comunidad-item">
+          <div class="comunidad-item animate-on-scroll" data-aos="fade-up">
             <h3>Círculo de Fin de Año</h3>
             <p>Un momento para reflexionar sobre el año que termina, agradecer los aprendizajes, soltar lo que ya no
               sirve y sembrar intenciones para el año que comienza, en comunidad y con rituales de conexión profunda.
@@ -167,15 +215,64 @@
             <p style="margin-top: 8px; font-size: 0.95rem; opacity: 0.9;">✨ Colabora: <a
                 href="https://www.instagram.com/masyogaconsciente_" target="_blank" rel="noopener"
                 style="color: inherit; font-weight: 600;">@masyogaconsciente_</a></p>
-            
+
             <div class="masonry-gallery" id="gallery-fin" style="margin-top: 16px;">
-              <div class="masonry-item" data-index="0"><img src="../assets/images/downloads/circulos-04-fin.jpg" alt="Fin de Año 1" loading="lazy"></div>
-              <div class="masonry-item" data-index="1"><img src="../assets/images/downloads/circulos-05-fin.jpg" alt="Fin de Año 2" loading="lazy"></div>
-              <div class="masonry-item" data-index="2"><img src="../assets/images/downloads/circulos-06-fin.jpg" alt="Fin de Año 3" loading="lazy"></div>
-              <div class="masonry-item" data-index="3"><img src="../assets/images/downloads/circulos-07-fin.jpg" alt="Fin de Año 4" loading="lazy"></div>
-              <div class="masonry-item" data-index="4"><img src="../assets/images/downloads/circulos-13-fin.jpg" alt="Fin de Año 5" loading="lazy"></div>
-              <div class="masonry-item" data-index="5"><img src="../assets/images/downloads/circulos-14-fin.jpg" alt="Fin de Año 6" loading="lazy"></div>
-              <div class="masonry-item" data-index="6"><img src="../assets/images/downloads/circulos-15-fin.jpg" alt="Fin de Año 7" loading="lazy"></div>
+              <div class="masonry-item" data-index="0">
+                <picture>
+                  <source type="image/webp"
+                    srcset="../assets/images/downloads/thumbnails/circulos-04-fin.webp 1x, ../assets/images/downloads/fullres/circulos-04-fin.webp 2x">
+                  <img src="../assets/images/downloads/thumbnails/circulos-04-fin.webp" alt="Fin de Año 1"
+                    loading="lazy" width="300" height="300">
+                </picture>
+              </div>
+              <div class="masonry-item" data-index="1">
+                <picture>
+                  <source type="image/webp"
+                    srcset="../assets/images/downloads/thumbnails/circulos-05-fin.webp 1x, ../assets/images/downloads/fullres/circulos-05-fin.webp 2x">
+                  <img src="../assets/images/downloads/thumbnails/circulos-05-fin.webp" alt="Fin de Año 2"
+                    loading="lazy" width="300" height="300">
+                </picture>
+              </div>
+              <div class="masonry-item" data-index="2">
+                <picture>
+                  <source type="image/webp"
+                    srcset="../assets/images/downloads/thumbnails/circulos-06-fin.webp 1x, ../assets/images/downloads/fullres/circulos-06-fin.webp 2x">
+                  <img src="../assets/images/downloads/thumbnails/circulos-06-fin.webp" alt="Fin de Año 3"
+                    loading="lazy" width="300" height="300">
+                </picture>
+              </div>
+              <div class="masonry-item" data-index="3">
+                <picture>
+                  <source type="image/webp"
+                    srcset="../assets/images/downloads/thumbnails/circulos-07-fin.webp 1x, ../assets/images/downloads/fullres/circulos-07-fin.webp 2x">
+                  <img src="../assets/images/downloads/thumbnails/circulos-07-fin.webp" alt="Fin de Año 4"
+                    loading="lazy" width="300" height="300">
+                </picture>
+              </div>
+              <div class="masonry-item" data-index="4">
+                <picture>
+                  <source type="image/webp"
+                    srcset="../assets/images/downloads/thumbnails/circulos-13-fin.webp 1x, ../assets/images/downloads/fullres/circulos-13-fin.webp 2x">
+                  <img src="../assets/images/downloads/thumbnails/circulos-13-fin.webp" alt="Fin de Año 5"
+                    loading="lazy" width="300" height="300">
+                </picture>
+              </div>
+              <div class="masonry-item" data-index="5">
+                <picture>
+                  <source type="image/webp"
+                    srcset="../assets/images/downloads/thumbnails/circulos-14-fin.webp 1x, ../assets/images/downloads/fullres/circulos-14-fin.webp 2x">
+                  <img src="../assets/images/downloads/thumbnails/circulos-14-fin.webp" alt="Fin de Año 6"
+                    loading="lazy" width="300" height="300">
+                </picture>
+              </div>
+              <div class="masonry-item" data-index="6">
+                <picture>
+                  <source type="image/webp"
+                    srcset="../assets/images/downloads/thumbnails/circulos-15-fin.webp 1x, ../assets/images/downloads/fullres/circulos-15-fin.webp 2x">
+                  <img src="../assets/images/downloads/thumbnails/circulos-15-fin.webp" alt="Fin de Año 7"
+                    loading="lazy" width="300" height="300">
+                </picture>
+              </div>
             </div>
           </div>
         </div>
@@ -232,7 +329,8 @@
         </div>
         <div class="comunidad-image">
           <div class="masonry-gallery" id="gallery-virtuales">
-            <div class="masonry-item" data-index="0"><img src="../assets/images/downloads/virtuales-01.jpg" alt="Círculos Virtuales" loading="lazy"></div>
+            <div class="masonry-item" data-index="0"><img src="../assets/images/downloads/virtuales-01.jpg"
+                alt="Círculos Virtuales" loading="lazy"></div>
           </div>
         </div>
       </div>
@@ -317,11 +415,13 @@
         <div class="cta-box">
           <h2 style="margin-bottom: 16px; font-size: 1.8rem;">¿Quieres ser parte de nuestros próximos eventos?</h2>
           <p style="font-size: 1.2rem; margin-bottom: 32px;">Acompáñanos uniéndote a nuestra comunidad en Instagram</p>
-          <a href="https://www.instagram.com/bidxaagui/" target="_blank" rel="noopener" class="btn-instagram">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+          <a href="https://www.instagram.com/bidxaagui/" target="_blank" rel="noopener" class="btn"
+            style="display: inline-flex; align-items: center; gap: 8px; background-color: #916637; color: white; border: none;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
               <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2"></line>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
             </svg>
             Síguenos en Instagram
           </a>
@@ -356,6 +456,60 @@
 
   <script src="../js/script.js"></script>
   <script src="../js/lightbox.js"></script>
+  <script>
+    // Script para animaciones al hacer scroll
+    document.addEventListener('DOMContentLoaded', function () {
+      const animateElements = document.querySelectorAll('.animate-on-scroll');
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            // Agregar clase 'visible' para activar las animaciones
+            entry.target.classList.add('visible');
+
+            // Aplicar delay basado en el atributo data-aos-delay si existe
+            const delay = entry.target.getAttribute('data-aos-delay') || 0;
+
+            // Usar setTimeout para aplicar el delay
+            setTimeout(() => {
+              entry.target.style.opacity = '1';
+              entry.target.style.transform = 'translateY(0)';
+            }, parseInt(delay));
+
+            // Dejar de observar para mejorar rendimiento
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      });
+
+      // Observar cada elemento con la clase animate-on-scroll
+      animateElements.forEach(element => {
+        observer.observe(element);
+      });
+
+      // Añadir clase 'visible' a los elementos que ya están en el viewport al cargar
+      const checkElementsInView = () => {
+        animateElements.forEach(element => {
+          const rect = element.getBoundingClientRect();
+          const isInView = (
+            rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.bottom >= 0
+          );
+
+          if (isInView) {
+            element.classList.add('visible');
+          }
+        });
+      };
+
+      // Verificar elementos visibles al cargar y después de un pequeño retraso
+      window.addEventListener('load', checkElementsInView);
+      setTimeout(checkElementsInView, 500);
+    });
+  </script>
 </body>
 
 </html>

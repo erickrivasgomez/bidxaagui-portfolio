@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Crear cards
   therapiesData.forEach(therapy => {
     const card = document.createElement('div');
-    card.className = 'therapy-card';
+    card.className = 'therapy-card animate-on-scroll';
     card.innerHTML = `
       <div class="therapy-card-emoji">${therapy.emoji}</div>
       <h3>${therapy.title}</h3>

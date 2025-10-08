@@ -1,0 +1,138 @@
+/* ===== ANIMACIONES SUAVES PARA EL CONSULTORIO ===== */
+
+/* Animaciones base */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Efectos de hover suaves */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Efecto sutil en botones */
+.btn {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateX(-100%) skewX(-15deg);
+  transition: transform 0.4s ease;
+  z-index: 1;
+}
+
+.btn:hover::after {
+  transform: translateX(100%) skewX(-15deg);
+}
+
+/* Animaciones para elementos específicos */
+.animate-on-scroll {
+  opacity: 0;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: none !important;
+}
+
+/* Efecto sutil en enlaces */
+a:not(.btn) {
+  position: relative;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:not(.btn)::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: currentColor;
+  transition: width 0.3s ease;
+}
+
+a:not(.btn):hover::after {
+  width: 100%;
+}
+
+/* Efecto sutil en las tarjetas de terapias */
+.therapy-card {
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.therapy-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Efecto sutil en la lista de autocuidado */
+.autocuidado-list li {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.autocuidado-list li.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Retrasos para animaciones en lista */
+.autocuidado-list li:nth-child(1) { transition-delay: 0.1s; }
+.autocuidado-list li:nth-child(2) { transition-delay: 0.2s; }
+.autocuidado-list li:nth-child(3) { transition-delay: 0.3s; }
+.autocuidado-list li:nth-child(4) { transition-delay: 0.4s; }
+.autocuidado-list li:nth-child(5) { transition-delay: 0.5s; }
+.autocuidado-list li:nth-child(6) { transition-delay: 0.6s; }
+.autocuidado-list li:nth-child(7) { transition-delay: 0.7s; }
+
+/* Respetar preferencias de reducción de movimiento */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .animate-on-scroll,
+  .therapy-card,
+  .autocuidado-list li {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  
+  .btn::after,
+  a:not(.btn)::after {
+    display: none;
+  }
+}

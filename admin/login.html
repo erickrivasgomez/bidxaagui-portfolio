@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Acceso administrativo · BIDXAAGUI</title>
+  <meta name="description" value="Solicita un enlace mágico para acceder al panel administrativo de BIDXAAGUI." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    body {
+      padding-top: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(250, 247, 240, 0.95), rgba(200, 150, 101, 0.25)), var(--bg);
+    }
+
+    .auth-wrapper {
+      width: min(480px, 94%);
+      margin: 40px auto;
+    }
+
+    .auth-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+    }
+
+    .auth-title {
+      margin: 0 0 10px;
+      text-align: center;
+    }
+
+    .auth-subtitle {
+      margin: 0 0 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .auth-form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .auth-form label {
+      font-size: 0.95rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .auth-form input[type="email"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font: inherit;
+      background: var(--bg);
+    }
+
+    .auth-form button {
+      justify-self: center;
+      min-width: 220px;
+    }
+
+    .auth-message {
+      min-height: 1.4em;
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .brand-mark {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      color: var(--text);
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .brand-mark img {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      object-fit: cover;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="auth-wrapper">
+    <section class="auth-card">
+      <div class="brand-mark" aria-label="BIDXAAGUI">
+        <img src="../assets/images/downloads/logo-transparente.png" alt="BIDXAAGUI logo">
+        <span>BIDXAAGUI</span>
+      </div>
+      <h1 class="auth-title">Panel administrativo</h1>
+      <p class="auth-subtitle">Solicita un enlace mágico para iniciar sesión.</p>
+
+      <form id="magic-form" class="auth-form">
+        <label>
+          Correo autorizado
+          <input type="email" name="email" required autocomplete="email" placeholder="tu@correo.com">
+        </label>
+        <button class="btn btn-primary" type="submit">Enviar enlace mágico</button>
+        <p id="msg" class="auth-message" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <script src="auth.js" type="module"></script>
+</body>
+
+</html>

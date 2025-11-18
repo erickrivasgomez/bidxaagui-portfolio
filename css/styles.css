@@ -49,24 +49,6 @@ h3{font-size:1.125rem;}
 .skip-link{position:absolute; left:-9999px; top:auto;}
 .skip-link:focus{left:16px; top:16px; background:#fff; padding:8px 12px; border:1px solid var(--line)}
 
-/* Color Customizer */
-.theme-selector{position:fixed; bottom:24px; right:24px; z-index:100; display:none}
-.theme-toggle{width:48px; height:48px; border-radius:50%; background:var(--card); border:1px solid var(--line); display:grid; place-items:center; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.1); transition:.2s ease}
-.theme-toggle:hover{transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,0.15)}
-.theme-toggle svg{color:var(--text)}
-.theme-panel{position:absolute; bottom:60px; right:0; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px; width:280px; max-height:80vh; overflow-y:auto; box-shadow:0 8px 24px rgba(0,0,0,0.12); opacity:0; visibility:hidden; transform:translateY(8px); transition:.25s ease}
-.theme-panel.open{opacity:1; visibility:visible; transform:translateY(0)}
-.theme-panel h3{margin:0 0 14px; font-size:.95rem; color:var(--text); font-weight:600}
-.preset-buttons{display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--line)}
-.preset-btn{padding:6px 10px; border:1px solid var(--line); border-radius:8px; background:transparent; cursor:pointer; font-size:.75rem; color:var(--text); transition:.2s ease}
-.preset-btn:hover{background:rgba(0,0,0,0.04); border-color:var(--accent)}
-.color-controls{display:grid; gap:12px}
-.color-control{display:grid; gap:6px}
-.color-control label{font-size:.8rem; color:var(--muted); font-weight:500}
-.color-control input[type="color"]{width:100%; height:40px; border:1px solid var(--line); border-radius:8px; cursor:pointer}
-.reset-btn{margin-top:16px; width:100%; padding:10px; border:1px solid var(--line); border-radius:8px; background:var(--accent); color:var(--card); cursor:pointer; font-size:.85rem; font-weight:500; transition:.2s ease}
-.reset-btn:hover{opacity:.9; transform:translateY(-1px)}
-
 .site-header{
   position:fixed;
   top:0;
@@ -572,15 +554,6 @@ html, body{
   
   /* Nota importante */
   .nota-importante{padding:24px}
-  
-  /* Theme selector */
-  .theme-selector{bottom:16px; right:16px}
-  .theme-toggle{width:44px; height:44px}
-  .theme-panel{width:260px; right:-8px}
-  
-  /* Footer responsive */
-  .footer-inner{flex-direction:column; gap:16px; text-align:center}
-  .footer-links{flex-wrap:wrap; justify-content:center; gap:12px}
 }
 
 @media (max-width: 480px) {

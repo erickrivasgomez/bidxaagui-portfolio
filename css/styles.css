@@ -701,6 +701,7 @@ html, body{
 .feature-list li[data-icon="heart"]::before { content: '\f004'; } /* Heart */
 .feature-list li[data-icon="fist-raised"]::before { content: '\f6de'; } /* Raised Fist */
 .feature-list li[data-icon="users"]::before { content: '\f0c0'; } /* Users */
+.feature-list li[data-icon="bug"]::before { content: '\f188'; } /* Bug */
 
 /* Hover effect */
 .feature-list li:hover::before {

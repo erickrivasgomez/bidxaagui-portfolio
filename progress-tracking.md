@@ -1,0 +1,23 @@
+# Checklist for Bidxaagui Project Implementation
+
+- [ ] Analyze requirements
+- [ ] Set up necessary files and directories
+- [ ] Implement static public site
+- [ ] Develop magazine reader in `/lector`
+- [ ] Create admin panel in `/admin` with:
+  - [ ] Implement magic link login
+  - [ ] Set up CRUD for subscribers
+  - [ ] Set up CRUD for magazine editions
+  - [ ] Set up CRUD for convocatorias
+  - [ ] Implement email campaign functionality
+- [ ] Develop backend in Workers with API routes
+- [ ] Configure asset storage in R2
+- [ ] Set up D1 database with migrations
+- [ ] Implement CI/CD with GitHub Actions for deployment
+- [ ] Ensure all UI content is in Spanish
+- [ ] Maintain legacy routes with proper redirects
+- [ ] Implement security measures for authentication and email
+- [ ] Create unit tests and e2e tests for critical flows
+- [ ] Document endpoints and migrations
+- [ ] Prepare rollback plan
+- [ ] Review and finalize pull requests

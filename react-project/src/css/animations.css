@@ -1,0 +1,72 @@
+/* ===== ANIMACIONES PARA BOTONES ===== */
+
+/* Clase base para botones con animación */
+.btn-animated {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transform: translateZ(0);
+  will-change: transform, box-shadow;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Efecto de onda al hacer hover */
+.btn-animated::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+  z-index: -1;
+}
+
+.btn-animated:hover::after {
+  transform: translateX(100%);
+}
+
+/* Animación de flotación */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.02);
+  }
+}
+
+/* Botón de la cabecera con animación de flotación */
+.antroponomadas-header .btn-animated {
+  animation: float 3s ease-in-out infinite;
+  padding: 14px 32px;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+/* Efecto de escala en hover para el botón del contenido */
+.antroponomadas-content .btn-animated {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.antroponomadas-content .btn-animated:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(184, 92, 60, 0.3);
+}
+
+/* Ajustes de accesibilidad para reducir movimiento */
+@media (prefers-reduced-motion: reduce) {
+  .btn-animated,
+  .btn-animated:hover,
+  .btn-animated:active {
+    transition: none;
+    transform: none !important;
+    animation: none !important;
+  }
+  
+  .btn-animated::after {
+    display: none;
+  }
+}

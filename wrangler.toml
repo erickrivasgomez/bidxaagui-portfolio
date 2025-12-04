@@ -1,0 +1,22 @@
+name = "bidxaagui-portfolio"
+compatibility_date = "2023-10-30"
+
+# For static site hosting
+[site]
+bucket = "."
+
+# Development settings
+[dev]
+port = 8788
+local_protocol = "http"
+
+# Production environment
+[env.production]
+name = "bidxaagui-portfolio-prod"
+route = "https://yourdomain.com/*"
+
+# D1 database binding (will be configured later)
+[[d1_databases]]
+binding = "DB"
+database_name = "bidxaagui-db"
+database_id = ""  # Will be set after database creation

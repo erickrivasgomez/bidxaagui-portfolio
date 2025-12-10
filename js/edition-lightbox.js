@@ -80,8 +80,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // Cargar los datos de la edición desde el backend
   async function loadEdition(editionId) {
     try {
-      // Aquí deberías reemplazar la URL con la ruta correcta de tu API
-      const response = await fetch(`/api/editions/${editionId}`);
+      // Usar la URL proporcionada para obtener las páginas de la edición
+      const response = await fetch(`https://api.bidxaagui.com/api/ediciones/${editionId}/pages`);
       
       if (!response.ok) {
         throw new Error('No se pudo cargar la edición');
@@ -90,7 +90,16 @@ document.addEventListener('DOMContentLoaded', function() {
       const data = await response.json();
       
       if (data.success) {
-        currentEdition = data.data;
+        // Crear un objeto de edición con los datos necesarios
+        currentEdition = {
+          id: editionId,
+          titulo: 'Edición ' + editionId,  // Título por defecto
+          paginas: data.data.map(page => ({
+            id: page.id,
+            numero: page.numero,
+            imagen_url: 'https://api.bidxaagui.com/' + page.imagen_url  // Asegurarse de que la URL sea absoluta
+          }))
+        };
         displayEdition(currentEdition);
       } else {
         throw new Error(data.error || 'Error al cargar la edición');
@@ -108,14 +117,19 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Mostrar los datos de la edición en el lightbox
   function displayEdition(edition) {
-    // Actualizar título y descripción
+    // Actualizar título
     titleElement.textContent = edition.titulo || 'Edición sin título';
-    descriptionElement.textContent = edition.descripcion || '';
+    
+    // Ocultar el elemento de descripción ya que no lo tenemos en la respuesta
+    descriptionElement.style.display = 'none';
     
     // Cargar las páginas de la edición
     if (edition.paginas && edition.paginas.length > 0) {
       totalPages = edition.paginas.length;
       totalPagesElement.textContent = totalPages;
+      
+      // Ordenar las páginas por número
+      edition.paginas.sort((a, b) => a.numero - b.numero);
       
       // Mostrar la primera página
       displayPage(1);

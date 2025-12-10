@@ -95,8 +95,8 @@ document.addEventListener('DOMContentLoaded', function() {
       if (result.success && Array.isArray(result.data)) {
         // Crear un objeto de edición con los datos necesarios
         currentEdition = {
-          id: editionId,
-          titulo: 'Edición ' + editionNumber,  // Usar el número de edición en el título
+          id: editionUuid,
+          titulo: 'Edición 2',  // Título estático ya que estamos usando un UUID fijo
           paginas: result.data.map(page => ({
             id: page.id,
             numero: page.numero,

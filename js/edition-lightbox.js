@@ -87,19 +87,23 @@ document.addEventListener('DOMContentLoaded', function() {
         throw new Error('No se pudo cargar la edición');
       }
       
-      const data = await response.json();
+      const result = await response.json();
+      console.log('API Response:', result); // Para depuración
       
-      if (data.success) {
+      if (result.success && Array.isArray(result.data)) {
         // Crear un objeto de edición con los datos necesarios
         currentEdition = {
           id: editionId,
           titulo: 'Edición ' + editionId,  // Título por defecto
-          paginas: data.data.map(page => ({
+          paginas: result.data.map(page => ({
             id: page.id,
             numero: page.numero,
-            imagen_url: 'https://api.bidxaagui.com/' + page.imagen_url  // Asegurarse de que la URL sea absoluta
+            // Asegurarse de que la URL sea absoluta y no tenga doble barra
+            imagen_url: page.imagen_url.startsWith('http') ? page.imagen_url : 
+                       `https://api.bidxaagui.com/${page.imagen_url.replace(/^\/+/, '')}`
           }))
         };
+        console.log('Processed Edition:', currentEdition); // Para depuración
         displayEdition(currentEdition);
       } else {
         throw new Error(data.error || 'Error al cargar la edición');
@@ -117,6 +121,8 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Mostrar los datos de la edición en el lightbox
   function displayEdition(edition) {
+    console.log('Displaying edition:', edition); // Para depuración
+    
     // Actualizar título
     titleElement.textContent = edition.titulo || 'Edición sin título';
     
@@ -124,12 +130,15 @@ document.addEventListener('DOMContentLoaded', function() {
     descriptionElement.style.display = 'none';
     
     // Cargar las páginas de la edición
-    if (edition.paginas && edition.paginas.length > 0) {
-      totalPages = edition.paginas.length;
-      totalPagesElement.textContent = totalPages;
+    if (edition.paginas && Array.isArray(edition.paginas) && edition.paginas.length > 0) {
+      console.log('Pages found:', edition.paginas); // Para depuración
       
       // Ordenar las páginas por número
-      edition.paginas.sort((a, b) => a.numero - b.numero);
+      const sortedPages = [...edition.paginas].sort((a, b) => a.numero - b.numero);
+      edition.paginas = sortedPages;
+      
+      totalPages = edition.paginas.length;
+      totalPagesElement.textContent = totalPages;
       
       // Mostrar la primera página
       displayPage(1);

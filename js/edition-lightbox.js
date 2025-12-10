@@ -80,8 +80,10 @@ document.addEventListener('DOMContentLoaded', function() {
   // Cargar los datos de la edición desde el backend
   async function loadEdition(editionId) {
     try {
-      // Usar la URL proporcionada para obtener las páginas de la edición
-      const response = await fetch(`https://api.bidxaagui.com/api/ediciones/${editionId}/pages`);
+      // Usar el UUID completo de la edición
+      const editionUuid = 'c6f5b15b-156a-4201-8c39-06e80d6464c3';
+      const response = await fetch(`https://api.bidxaagui.com/api/ediciones/${editionUuid}/pages`);
+      console.log('Fetching from URL:', `https://api.bidxaagui.com/api/ediciones/${editionUuid}/pages`);
       
       if (!response.ok) {
         throw new Error('No se pudo cargar la edición');
@@ -94,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Crear un objeto de edición con los datos necesarios
         currentEdition = {
           id: editionId,
-          titulo: 'Edición ' + editionId,  // Título por defecto
+          titulo: 'Edición ' + editionNumber,  // Usar el número de edición en el título
           paginas: result.data.map(page => ({
             id: page.id,
             numero: page.numero,

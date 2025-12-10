@@ -153,12 +153,20 @@
       <div class="container">
         <h2>Lee nuestras ediciones</h2>
         <div class="grid gallery">
-          <a class="gallery-item" href="https://antroponomadas-ui.pages.dev/ediciones/1"><span>Edición 1 - Nov
-              2025</span></a>
-          <a class="gallery-item edition-lightbox-trigger" href="#" data-edition-id="2">
+          <div class="gallery-item">
+            <span>Edición 1 - Nov 2025</span>
+            <a href="https://antroponomadas-ui.pages.dev/ediciones/1" class="btn-preview">Ver edición</a>
+          </div>
+          <div class="gallery-item">
             <span>Edición 2 - Dic 2025 (Próximamente)</span>
-          </a>
-          <a class="gallery-item" href="#"><span>Edición 3 - Ene 2026 (Próximamente)</span></a>
+            <button class="btn-preview edition-lightbox-trigger" data-edition-id="2">
+              Vista previa
+            </button>
+          </div>
+          <div class="gallery-item">
+            <span>Edición 3 - Ene 2026 (Próximamente)</span>
+            <button class="btn-preview" disabled>Próximamente</button>
+          </div>
         </div>
       </div>
     </section>

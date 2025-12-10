@@ -227,6 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
     buttons.forEach(button => {
       button.addEventListener('click', function(e) {
         e.preventDefault();
+        e.stopPropagation();
         const editionId = this.getAttribute('data-edition-id');
         if (editionId) {
           openLightbox(editionId);

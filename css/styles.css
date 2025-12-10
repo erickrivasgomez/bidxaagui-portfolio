@@ -329,9 +329,86 @@ h3{font-size:1.125rem;}
 .card .link:hover{text-decoration:underline}
 
 /* Gallery */
-.gallery{grid-template-columns:repeat(4, 1fr)}
-.gallery-item{position:relative; aspect-ratio:4/3; display:grid; place-items:end start; padding:16px; background:linear-gradient(135deg, rgba(45,75,58,.12), rgba(0,0,0,.04)); color:var(--text); border:1px solid var(--line); border-radius:14px; text-decoration:none}
-.gallery-item span{background:rgba(255,255,255,0.7); padding:6px 10px; border-radius:12px; font-size:.85rem}
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 0 16px;
+}
+
+.gallery-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-height: 200px;
+  justify-content: space-between;
+}
+
+.gallery-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.gallery-item span {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 16px;
+  padding: 0;
+  background: none;
+  border-radius: 0;
+}
+
+/* Preview Button */
+.btn-preview {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: var(--accent);
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-family: "Merienda", Georgia, serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 80%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.btn-preview:hover {
+  background-color: #9c4a32;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-preview:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  opacity: 0.7;
+}
+
+/* Lightbox Trigger Button */
+.edition-lightbox-trigger {
+  background-color: #4a90e2 !important;
+}
+
+.edition-lightbox-trigger:hover {
+  background-color: #3a7bc8 !important;
+}
 
 /* About */
 .about{display:grid; grid-template-columns:1.25fr .75fr; gap:32px; align-items:center}

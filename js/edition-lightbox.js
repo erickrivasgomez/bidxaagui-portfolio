@@ -100,9 +100,8 @@ document.addEventListener('DOMContentLoaded', function() {
           paginas: result.data.map(page => ({
             id: page.id,
             numero: page.numero,
-            // Asegurarse de que la URL sea absoluta y no tenga doble barra
-            imagen_url: page.imagen_url.startsWith('http') ? page.imagen_url : 
-                       `https://api.bidxaagui.com/${page.imagen_url.replace(/^\/+/, '')}`
+            // Construir la URL completa de la imagen con el prefijo /api/images/
+            imagen_url: `https://api.bidxaagui.com/api/images/editions/${editionUuid}/${page.imagen_url.split('/').pop()}`
           }))
         };
         console.log('Processed Edition:', currentEdition); // Para depuración
@@ -171,10 +170,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Crear elemento de imagen
     const img = document.createElement('img');
-    img.src = page.imagen_url;
+    // Usar la URL ya construida
+    const imageUrl = page.imagen_url;
+    img.src = imageUrl;
     img.alt = `Página ${pageNumber} de ${currentEdition.titulo}`;
     img.className = 'edition-page';
     img.loading = 'lazy';
+    img.onerror = function() {
+      console.error('Error al cargar la imagen:', imageUrl);
+      this.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23f0f0f0"/><text x="50" y="50" font-family="sans-serif" font-size="10" text-anchor="middle" fill="%23999">Imagen no disponible</text></svg>';
+    };
     
     // Limpiar contenedor y agregar la imagen
     pagesContainer.innerHTML = '';

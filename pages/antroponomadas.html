@@ -155,16 +155,38 @@
         <div class="grid gallery">
           <a class="gallery-item" href="https://antroponomadas-ui.pages.dev/ediciones/1"><span>Edición 1 - Nov
               2025</span></a>
-          <a class="gallery-item" href=""><span>Edición 2 - Dic 2025 (Próximamente)</span></a>
-          <a class="gallery-item" href=""><span>Edición 3 - Ene 2026 (Próximamente)</span></a>
+          <a class="gallery-item edition-lightbox-trigger" href="#" data-edition-id="2">
+            <span>Edición 2 - Dic 2025 (Próximamente)</span>
+          </a>
+          <a class="gallery-item" href="#"><span>Edición 3 - Ene 2026 (Próximamente)</span></a>
         </div>
       </div>
     </section>
+
+    <!-- Lightbox para mostrar la edición -->
+    <div id="edition-lightbox" class="lightbox">
+      <div class="lightbox-content">
+        <button class="lightbox-close" aria-label="Cerrar">&times;</button>
+        <div class="lightbox-body">
+          <div class="edition-loader">Cargando edición...</div>
+          <div class="edition-content" style="display: none;">
+            <h2 class="edition-title"></h2>
+            <div class="edition-description"></div>
+            <div class="edition-pages"></div>
+            <div class="edition-navigation">
+              <button class="nav-button prev-page" disabled>Anterior</button>
+              <span class="page-counter">Página <span class="current-page">1</span> de <span class="total-pages">0</span></span>
+              <button class="nav-button next-page">Siguiente</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 
   <footer class="site-footer" role="contentinfo">
     <div class="container footer-inner">
-      <div>© <span id="year"></span> BIDXAAGUI</div>
+      <div> BIDXAAGUI</div>
       <div class="footer-links">
         <a href="../index.html">Inicio</a>
         <a href="antropologia-fisica.html">Antropología Biológica</a>
@@ -177,6 +199,7 @@
 
   <script src="../js/script.js"></script>
   <script src="../js/index-animations.js"></script>
+  <script src="../js/edition-lightbox.js"></script>
 </body>
 
 </html>

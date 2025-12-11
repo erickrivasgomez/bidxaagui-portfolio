@@ -151,29 +151,215 @@
       </div>
     </section>
 
-
     <section class="section section-alt">
       <div class="container">
         <h2>Lee nuestras ediciones</h2>
-        <div class="grid gallery">
-          <div class="gallery-item edition-card" data-edition-id="1f81e2f1-fd2c-4844-b60e-3931e69dab02">
-            <i class="fas fa-book-open edition-icon"></i>
-            <span>Edición 1 - Nov 2025</span>
-            <p class="edition-hint">Click para leer</p>
-          </div>
-          <div class="gallery-item edition-card" data-edition-id="99b7ee19-89e6-4075-b449-9e8c6930c0fe">
-            <i class="fas fa-book-open edition-icon"></i>
-            <span>Edición 2 - Dic 2025</span>
-            <p class="edition-hint">Click para leer</p>
-          </div>
-          <div class="gallery-item edition-card-disabled">
-            <i class="fas fa-hourglass-half edition-icon"></i>
-            <span>Edición 3 - Ene 2026</span>
-            <p class="edition-hint">Próximamente</p>
-          </div>
+        <div id="editions-loading" class="loading-state">
+          <div class="spinner"></div>
+          <p>Cargando ediciones disponibles...</p>
+        </div>
+        <div id="editions-container" class="grid gallery">
+          <!-- Las ediciones se cargarán aquí dinámicamente -->
         </div>
       </div>
     </section>
+
+    <style>
+      .edition-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        aspect-ratio: 2/3;
+        background-color: #f5f5f5;
+      }
+      
+      .edition-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      }
+      
+      .edition-cover {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+      
+      .edition-card:hover .edition-cover {
+        transform: scale(1.05);
+      }
+      
+      .edition-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        color: white;
+        padding: 20px 15px 15px;
+        text-align: center;
+      }
+      
+      .edition-title {
+        font-weight: 600;
+        margin: 0 0 5px;
+        font-size: 1.1em;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      }
+      
+      .edition-date {
+        font-size: 0.9em;
+        opacity: 0.9;
+        margin: 0;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+      }
+      
+      .loading-state {
+        text-align: center;
+        padding: 2rem;
+      }
+      
+      .spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        border-top: 4px solid #4a90e2;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      .edition-card-disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        aspect-ratio: 2/3;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #f5f5f5;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+      }
+      
+      .edition-card-disabled .edition-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: #666;
+      }
+    </style>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const API_URL = 'https://api.bidxaagui.com/api/ediciones';
+      const container = document.getElementById('editions-container');
+      const loading = document.getElementById('editions-loading');
+      
+      // Formatear fecha
+      function formatDate(dateString) {
+        const options = { year: 'numeric', month: 'long' };
+        return new Date(dateString).toLocaleDateString('es-MX', options);
+      }
+      
+      // Crear tarjeta de edición
+      function createEditionCard(edition) {
+        const card = document.createElement('div');
+        card.className = 'gallery-item edition-card';
+        card.setAttribute('data-edition-id', edition.id);
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-label', `Leer ${edition.titulo} - ${formatDate(edition.fecha)}`);
+        
+        const coverUrl = edition.cover_url?.startsWith('http') 
+          ? edition.cover_url 
+          : `https://api.bidxaagui.com/api/images/${edition.cover_url || 'default-cover.jpg'}`;
+        
+        card.innerHTML = `
+          <img 
+            src="${coverUrl}" 
+            alt="${edition.titulo}" 
+            class="edition-cover"
+            loading="lazy"
+            onerror="this.onerror=null; this.src='https://via.placeholder.com/400x600?text=Portada+no+disponible'"
+          >
+          <div class="edition-info">
+            <h3 class="edition-title">${edition.titulo}</h3>
+            <p class="edition-date">${formatDate(edition.fecha)}</p>
+          </div>
+        `;
+        
+        // Agregar manejador de clic
+        card.addEventListener('click', () => {
+          window.location.href = `/leer/${edition.id}`;
+        });
+        
+        // Soporte para teclado
+        card.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            window.location.href = `/leer/${edition.id}`;
+          }
+        });
+        
+        return card;
+      }
+      
+      // Cargar ediciones
+      async function loadEditions() {
+        try {
+          const response = await fetch(API_URL);
+          if (!response.ok) throw new Error('Error al cargar las ediciones');
+          
+          const data = await response.json();
+          const publishedEditions = data.data.filter(edition => edition.publicada === 1);
+          
+          // Limpiar el contenedor
+          container.innerHTML = '';
+          
+          // Agregar ediciones publicadas
+          publishedEditions.forEach(edition => {
+            container.appendChild(createEditionCard(edition));
+          });
+          
+          // Agregar tarjeta de próxima edición si hay menos de 3 ediciones
+          if (publishedEditions.length < 3) {
+            const nextEdition = document.createElement('div');
+            nextEdition.className = 'gallery-item edition-card-disabled';
+            nextEdition.innerHTML = `
+              <i class="fas fa-hourglass-half edition-icon"></i>
+              <span>Edición ${publishedEditions.length + 1} - Próximamente</span>
+              <p class="edition-hint">En preparación</p>
+            `;
+            container.appendChild(nextEdition);
+          }
+          
+          // Mostrar el contenedor y ocultar el indicador de carga
+          container.style.display = 'grid';
+          loading.style.display = 'none';
+          
+        } catch (error) {
+          console.error('Error:', error);
+          loading.innerHTML = `
+            <div class="error-message">
+              <i class="fas fa-exclamation-circle"></i>
+              <p>No se pudieron cargar las ediciones. Por favor, intente más tarde.</p>
+              <button onclick="loadEditions()" class="retry-button">Reintentar</button>
+            </div>
+          `;
+        }
+      }
+      
+      // Iniciar carga de ediciones
+      loadEditions();
+    });
+    </script>
 
     <!-- Modal fullscreen para el lector -->
     <div id="reader-modal" class="reader-modal">

@@ -186,8 +186,7 @@
 
         console.log('Dimensiones calculadas - width:', width, 'height:', height);
 
-        // Configuración de StPageFlip - OPTIMIZADA PARA MÓVIL
-        // Desactivamos los eventos nativos de la librería para tener control total manual
+        // Configuración de StPageFlip - CORREGIDA PARA IOS
         const config = {
             width: width,
             height: height,
@@ -198,15 +197,15 @@
             maxHeight: 1600,
             maxShadowOpacity: 0.5,
             showCover: true,
-            mobileScrollSupport: false, // IMPORTANTE: Desactivar scroll nativo del flipbook
+            mobileScrollSupport: false, // Mantener desactivado para control manual
             usePortrait: isMobile && isPortrait,
             startPage: 0,
             drawShadow: true,
-            flippingTime: 800, // Ligeramente más rápido
-            useMouseEvents: false, // IMPORTANTE: Desactivar eventos nativos para evitar conflictos
-            swipeDistance: 10000, // Valor imposible para desactivar swipe nativo de la librería
-            clickEventForward: false, // No reenviar clicks
-            disableFlipByClick: true // Desactivar flip por click nativo
+            flippingTime: 800,
+            useMouseEvents: true, // REACTIVAR: Necesario para que el motor interno funcione en iOS
+            swipeDistance: 30, // Restaurar valor razonable
+            clickEventForward: true,
+            disableFlipByClick: true // Pero desactivar el flip por click nativo
         };
 
         console.log('Configuración:', config);
@@ -234,57 +233,64 @@
             updatePageCounter(0, totalPages);
             updateButtonsState(0, totalPages);
 
-            // === CONTROLADOR TÁCTIL MANUAL (TOUCH CONTROLLER) ===
-            // Este bloque reemplaza toda la interacción nativa para garantizar precisión
+            // === CONTROLADOR TÁCTIL HÍBRIDO ===
+            // Usamos un overlay transparente para capturar gestos sin interferir con el canvas subyacente
+
+            // Crear overlay de gestos
+            const gestureOverlay = document.createElement('div');
+            gestureOverlay.style.position = 'absolute';
+            gestureOverlay.style.top = '0';
+            gestureOverlay.style.left = '0';
+            gestureOverlay.style.width = '100%';
+            gestureOverlay.style.height = '100%';
+            gestureOverlay.style.zIndex = '20'; // Encima del canvas del flipbook
+            // Importante: touch-action: pan-y permite scroll vertical del navegador pero captura horizontal
+            gestureOverlay.style.touchAction = 'pan-y';
+
+            // Insertar overlay DENTRO del stf__parent pero ENCIMA del wrapper
+            container.appendChild(gestureOverlay);
 
             let touchStartX = 0;
             let touchStartY = 0;
-            let isDragging = false;
-            const touchThreshold = 30; // Sensibilidad del swipe (menor es más sensible)
+            const touchThreshold = 30;
 
-            // Seleccionamos el wrapper interno que crea la librería
-            const wrapper = container.querySelector('.stf__wrapper') || container;
-
-            wrapper.addEventListener('touchstart', (e) => {
+            gestureOverlay.addEventListener('touchstart', (e) => {
                 touchStartX = e.changedTouches[0].screenX;
                 touchStartY = e.changedTouches[0].screenY;
             }, { passive: true });
 
-            wrapper.addEventListener('touchend', (e) => {
+            gestureOverlay.addEventListener('touchend', (e) => {
                 const touchEndX = e.changedTouches[0].screenX;
                 const touchEndY = e.changedTouches[0].screenY;
 
                 const diffX = touchStartX - touchEndX;
                 const diffY = touchStartY - touchEndY;
 
-                // Si es un desplazamiento horizontal mayor al vertical (para evitar confundir con scroll)
+                // Si es un movimiento horizontal claro
                 if (Math.abs(diffX) > Math.abs(diffY)) {
-                    // SWIPE
                     if (Math.abs(diffX) > touchThreshold) {
+                        e.preventDefault(); // Evitar scroll horizontal del navegador si lo hubiera
                         if (diffX > 0) {
-                            // Swipe izquierda -> Siguiente
                             pageFlipInstance.flipNext();
                         } else {
-                            // Swipe derecha -> Anterior
                             pageFlipInstance.flipPrev();
                         }
                     }
                 } else if (Math.abs(diffX) < 10 && Math.abs(diffY) < 10) {
-                    // TAP (Toque simple sin arrastre)
-                    // Definir zonas de acción
-                    const width = window.innerWidth;
+                    // Tap setup
+                    const screenWidth = window.innerWidth;
                     const touchX = e.changedTouches[0].clientX;
 
-                    // 30% izquierdo para retroceder, resto para avanzar
-                    if (touchX < (width * 0.3)) {
+                    // Zona de retroceso expandida (40%)
+                    if (touchX < (screenWidth * 0.40)) {
                         pageFlipInstance.flipPrev();
                     } else {
                         pageFlipInstance.flipNext();
                     }
                 }
-            }, { passive: true });
+            }, { passive: false }); // passive: false para poder llamar preventDefault si es necesario
 
-            console.log('=== StPageFlip inicializado correctamente ===');
+            console.log('=== StPageFlip con Gesture Overlay Inicializado ===');
 
         } catch (error) {
             console.error('Error al inicializar PageFlip:', error);

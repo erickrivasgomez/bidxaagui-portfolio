@@ -17,7 +17,6 @@
     const closeBtn = document.querySelector('.reader-close');
     const overlay = document.querySelector('.reader-modal-overlay');
     const loading = document.querySelector('.reader-loading');
-    const readerButtons = document.querySelectorAll('.btn-reader');
 
     // Estado
     let currentEditionId = null;
@@ -80,15 +79,32 @@
      * Event Listeners
      */
 
-    // Botones de "Leer"
-    readerButtons.forEach(button => {
-        button.addEventListener('click', function (e) {
+    // Cards de ediciones clickeables
+    const editionCards = document.querySelectorAll('.edition-card');
+    editionCards.forEach(card => {
+        card.addEventListener('click', function (e) {
             e.preventDefault();
             const editionId = this.dataset.editionId;
             if (editionId) {
                 openReader(editionId);
             }
         });
+
+        // Accesibilidad: permitir Enter y Space
+        card.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const editionId = this.dataset.editionId;
+                if (editionId) {
+                    openReader(editionId);
+                }
+            }
+        });
+
+        // Hacer las cards tabbable
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', `Abrir ${card.querySelector('span')?.textContent}`);
     });
 
     // Botón cerrar

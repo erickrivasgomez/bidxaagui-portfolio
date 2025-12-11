@@ -12,25 +12,89 @@
     justify-content: center;
 }
 
+/* Contenedor principal del flipbook */
+#my-flipbook {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 /* Estilos para pantallas anchas en modo landscape */
 @media screen and (min-width: 1024px) and (orientation: landscape) {
     #book-container {
+        height: 90vh;
         max-height: 90vh;
-        padding: 20px 0;
+        padding: 2vh 0;
     }
     
     #my-flipbook {
-        max-height: 100%;
-    }
-    
-    .page {
+        /* Proporción de dos páginas juntas (2:1.3 basado en Letter) */
+        width: calc(90vh * 1.54); /* 2 * (11/8.5) */
+        max-width: 90vw;
+        height: 90vh;
         max-height: 90vh;
     }
     
-    .page-image {
-        max-height: 100%;
-        width: auto;
-        max-width: 100%;
+    .page {
+        /* Cada página individual tendrá la mitad del ancho total */
+        width: 50%;
+        height: 100%;
+        position: relative;
+    }
+    
+    .page img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+    }
+    
+    /* Asegurar que el contenedor del flipbook mantenga la relación de aspecto */
+    .flipbook-stage {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        perspective: 2000px;
+    }
+    
+    .flipbook-book {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.6s ease;
+    }
+    
+    .flipbook-left-page,
+    .flipbook-right-page {
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        backface-visibility: hidden;
+        overflow: hidden;
+        box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    }
+    
+    .flipbook-left-page {
+        left: 0;
+        transform-origin: right center;
+    }
+    
+    .flipbook-right-page {
+        right: 0;
+        transform-origin: left center;
+    }
+    
+    /* Ajustes para las imágenes dentro de las páginas */
+    .flipbook-left-page img,
+    .flipbook-right-page img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
     }
 }
 

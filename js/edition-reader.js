@@ -125,32 +125,31 @@
             this.stage = document.createElement('div');
             this.stage.className = `book-stage ${this.isSingleMode ? 'single-mode' : 'spread-mode'}`;
 
-            // Construir hojas
+            // Construir hojas (DOM structure only, no images yet)
             for (let i = 0; i < this.totalLeafs; i++) {
                 const leaf = document.createElement('div');
                 leaf.className = 'book-leaf';
-
-                // Z-Index inicial: Las primeras arriba.
                 leaf.style.zIndex = this.totalLeafs - i + 10;
 
-                // Configuración Front/Back
+                // Ocultar hojas lejanas para ahorrar memoria GPU (CRÍTICO PARA IOS)
+                // Solo mostramos las primeras 2 al inicio
+                if (i > 1 && i !== this.currentLeaf) {
+                    leaf.style.display = 'none';
+                }
+
                 const front = document.createElement('div');
                 front.className = 'book-page front';
                 const back = document.createElement('div');
                 back.className = 'book-page back';
 
+                // MODO SINGLE vs SPREAD (URLs mapping)
+                // Guardamos la URL en dataset para carga lazy
                 if (this.isSingleMode) {
-                    // MODO SINGLE: 
-                    // Leaf i Front = Image i
-                    // Leaf i Back = Decoración (se va fuera de pantalla)
-                    this.mkImg(front, this.images[i]);
-                    back.style.backgroundColor = '#ddd'; // Reverso gris
+                    front.dataset.src = this.images[i];
+                    back.style.backgroundColor = '#ddd';
                 } else {
-                    // MODO SPREAD:
-                    // Leaf i Front = Image i*2
-                    // Leaf i Back = Image i*2+1
-                    this.mkImg(front, this.images[i * 2]);
-                    this.mkImg(back, this.images[i * 2 + 1]);
+                    front.dataset.src = this.images[i * 2];
+                    back.dataset.src = this.images[i * 2 + 1];
                 }
 
                 leaf.appendChild(front);
@@ -158,30 +157,59 @@
                 this.stage.appendChild(leaf);
                 this.leafs.push(leaf);
 
-                // Si la página inicial es avanzada, setear estado sin animación
                 if (i < this.currentLeaf) {
                     leaf.classList.add('flipped');
-                    // Corrección Z-Index para hojas ya volteadas:
-                    // Deben ir debajo de la pila izquierda en orden inverso? 
-                    // No, Leaf 0 (Flipped) < Leaf 1 (Flipped). 
-                    // Pila Izquierda: Bottom->Top: 0, 1, 2...
                     leaf.style.zIndex = 100 + i;
                 }
             }
 
             this.container.appendChild(this.stage);
-
-            // Layout inicial
             this.resize(this.isSingleMode);
+
+            // Actualizar visibilidad y cargar imágenes iniciales
+            this.updateVisibility();
 
             setTimeout(() => this.stage.classList.add('loaded'), 50);
         }
 
         resize(isSingle) {
             this.isSingleMode = isSingle;
-            this.stage.className = `book-stage ${this.isSingleMode ? 'single-mode' : 'spread-mode'}`;
+            if (this.stage) this.stage.className = `book-stage ${this.isSingleMode ? 'single-mode' : 'spread-mode'}`;
             // Recalcular dimensiones CSS si fuera necesario
             // CSS classes .single-mode vs .spread-mode manejan el layout (ver CSS)
+        }
+
+        // Carga diferida de imágenes
+        updateVisibility() {
+            // Rango de visibilidad: Current - 2 hasta Current + 2
+            // Esto asegura que la animación tenga recursos listos pero no sature memoria
+            const range = 2;
+            const min = Math.max(0, this.currentLeaf - range);
+            const max = Math.min(this.totalLeafs - 1, this.currentLeaf + range);
+
+            this.leafs.forEach((leaf, i) => {
+                // VISIBILIDAD DOM (GPU Memory)
+                if (i >= min && i <= max) {
+                    leaf.style.display = 'block';
+                    // Cargar imágenes si no están cargadas
+                    this.loadLeafImages(leaf);
+                } else {
+                    leaf.style.display = 'none';
+                    // Opcional: Podríamos descargar imágenes aquí si la memoria es muy crítica
+                }
+            });
+        }
+
+        loadLeafImages(leaf) {
+            const pages = leaf.querySelectorAll('.book-page');
+            pages.forEach(page => {
+                if (page.dataset.src && !page.querySelector('img')) {
+                    const img = document.createElement('img');
+                    img.src = page.dataset.src;
+                    page.removeAttribute('data-src'); // Limpiar
+                    page.appendChild(img);
+                }
+            });
         }
 
         mkImg(container, src) {
@@ -206,6 +234,12 @@
                 const leaf = this.leafs[this.currentLeaf];
                 if (!leaf) return;
 
+                // Asegurar que la hoja siguiente sea visible antes de animar
+                if (this.currentLeaf + 1 < this.totalLeafs) {
+                    this.leafs[this.currentLeaf + 1].style.display = 'block';
+                    this.loadLeafImages(this.leafs[this.currentLeaf + 1]);
+                }
+
                 leaf.style.transition = 'transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1)';
 
                 // Z-Index durante vuelo: ¡Debe estar encima de todo!
@@ -217,6 +251,8 @@
                 const myIndex = this.currentLeaf;
                 setTimeout(() => {
                     leaf.style.zIndex = 100 + myIndex; // 100 base para flipped stack
+                    // Limpieza post-animación
+                    this.updateVisibility();
                 }, 400); // A mitad de camino
 
                 this.currentLeaf++;
@@ -226,6 +262,10 @@
                 const leaf = this.leafs[this.currentLeaf];
                 if (!leaf) return;
 
+                // Asegurar visible
+                leaf.style.display = 'block';
+                this.loadLeafImages(leaf);
+
                 leaf.style.transition = 'transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1)';
                 leaf.style.zIndex = 1000; // Vuelo retorno
 
@@ -234,6 +274,7 @@
                 const myIndex = this.currentLeaf;
                 setTimeout(() => {
                     leaf.style.zIndex = this.totalLeafs - myIndex + 10; // Restaurar orden original derecho
+                    this.updateVisibility();
                 }, 400);
             }
 

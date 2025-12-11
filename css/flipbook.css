@@ -3,41 +3,13 @@
    ============================================ */
 
 /* --- Book Container & Pages --- */
-
-/* El contenedor creado dinámicamente */
 #book-container {
     width: 100%;
     height: 100%;
-    overflow: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px 0;
-}
-
-/* El elemento DIV que PageFlip usa */
-#my-flipbook {
-    max-width: 100%;
-    max-height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Ajustes para el contenedor de páginas en modo spread (2 páginas) */
-#my-flipbook .page {
-    max-height: 100%;
-}
-
-#my-flipbook .page .page-content {
-    max-height: 100%;
     overflow: hidden;
-}
-
-#my-flipbook .page img {
-    max-height: 100%;
-    width: auto;
-    object-fit: contain;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Estilos de Páginas */
@@ -45,12 +17,9 @@
     background-color: #fff;
     overflow: hidden;
     box-shadow: inset -1px 0 20px rgba(0, 0, 0, 0.05);
-    /* Sutil sombra interna */
-    /* Asegurar que la página no tenga bordes raros */
 }
 
 .page-cover {
-    /* Estilos específicos para portada si se quisiera */
     z-index: 100;
 }
 
@@ -58,7 +27,6 @@
     width: 100%;
     height: 100%;
     object-fit: fill;
-    /* Ajusta la imagen sin recortar */
     object-position: center;
     display: block;
     user-select: none;
@@ -66,8 +34,6 @@
 }
 
 /* --- Modal Base Overrides --- */
-/* Aseguramos que el modal tenga el z-index correcto y layout */
-
 .reader-modal {
     position: fixed;
     top: 0;
@@ -75,11 +41,9 @@
     width: 100%;
     height: 100%;
     z-index: 9999;
-
     visibility: hidden;
     opacity: 0;
     transition: all 0.3s ease;
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -111,19 +75,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 0 auto;
-    padding: 20px;
-    box-sizing: border-box;
 }
 
 /* --- Botón Cerrar (Solo X) --- */
 .reader-close {
     position: absolute;
     top: -10px;
-    /* Un poco arriba del contenedor para flotar */
     right: 0;
     z-index: 10002;
-
     background: transparent;
     border: none;
     color: rgba(255, 255, 255, 0.7);
@@ -131,7 +90,6 @@
     cursor: pointer;
     padding: 10px;
     transition: color 0.2s ease, transform 0.2s ease;
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -143,20 +101,17 @@
     transform: scale(1.1) rotate(90deg);
 }
 
-/* En móvil, el botón puede necesitar ajuste */
+/* En móvil */
 @media (max-width: 768px) {
     .reader-modal-content {
         width: 100vw;
         height: 100vh;
-        /* Fullscreen total en móvil */
     }
 
     .reader-close {
         top: 10px;
         right: 15px;
-        /* Más margen */
         background: rgba(0, 0, 0, 0.3);
-        /* Fondo circular para contraste */
         border-radius: 50%;
         width: 40px;
         height: 40px;
@@ -184,21 +139,11 @@
     border-top: 3px solid #fff;
     width: 40px;
     height: 40px;
-    -webkit-animation: spin 1s linear infinite;
-    /* Safari */
     animation: spin 1s linear infinite;
     margin-bottom: 15px;
 }
 
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
-
-/* --- Shadows Softening --- */
-/* PageFlip agrega sombras canvas, a veces queremos ajustarlas, pero API lo hace. */

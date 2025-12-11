@@ -69,151 +69,123 @@
      */
     function initEngine() {
         const isMobilePortrait = window.matchMedia("(max-width: 768px) and (orientation: portrait)").matches;
-        const targetMode = isMobilePortrait ? 'mobile' : 'desktop';
+        // const targetMode = isMobilePortrait ? 'mobile' : 'desktop';
+        // FORZAMOS DESKTOP ENGINE (CustomFlipbook) CON CONFIGURACIÓN SINGLE PARA MÓVIL
+        const targetMode = 'custom_3d';
 
-        if (currentState.mode === targetMode) return;
+        if (currentState.mode === targetMode && currentState.engine) {
+            // Si solo es resize pero mismo motor, actualizar layout
+            currentState.engine.resize(isMobilePortrait);
+            return;
+        }
 
         destroyEngine();
         currentState.mode = targetMode;
 
         const container = getContainer();
 
-        if (targetMode === 'mobile') {
-            initMobileSlider(container);
-        } else {
-            console.log('🚀 Iniciando Custom 3D Engine');
-            // Mapear solo URLs para el constructor
-            const imageUrls = currentState.pages.map(p => `${API_URL}/api/images/${p.imagen_url}`);
-            currentState.engine = new CustomFlipbook(container, imageUrls, currentState.currentPage);
-        }
+        console.log('🚀 Iniciando Custom 3D Engine (Adaptativo)');
+        const imageUrls = currentState.pages.map(p => `${API_URL}/api/images/${p.imagen_url}`);
+
+        // Instanciar con modo single si es mobile portrait
+        currentState.engine = new CustomFlipbook(container, imageUrls, currentState.currentPage, isMobilePortrait);
 
         createControls();
         updateUI(currentState.currentPage);
     }
 
     /**
-     * Motor 1: Mobile Native Slider
+     * (Eliminada función initMobileSlider antigua para usar siempre 3D)
      */
-    function initMobileSlider(container) {
-        const slider = document.createElement('div');
-        slider.className = 'mobile-slider-container';
-
-        currentState.pages.forEach((page, index) => {
-            const pageDiv = document.createElement('div');
-            pageDiv.className = 'mobile-slider-page';
-            const img = document.createElement('img');
-            img.src = `${API_URL}/api/images/${page.imagen_url}`;
-            if (index > 2) img.loading = "lazy";
-
-            pageDiv.appendChild(img);
-            slider.appendChild(pageDiv);
-        });
-
-        slider.addEventListener('scroll', debounce(() => {
-            const pageWidth = slider.clientWidth;
-            const scrollLeft = slider.scrollLeft;
-            const newIndex = Math.round(scrollLeft / pageWidth);
-
-            if (newIndex !== currentState.currentPage) {
-                currentState.currentPage = newIndex;
-                updateUI(newIndex);
-            }
-        }, 50), { passive: true });
-
-        currentState.engine = slider;
-        container.appendChild(slider);
-
-        // Restaurar posición si aplica
-        if (currentState.currentPage > 0) {
-            setTimeout(() => {
-                slider.scrollTo({ left: currentState.currentPage * slider.clientWidth });
-            }, 50);
-        }
-    }
 
     /**
-     * Class CustomFlipbook (Desktop Engine)
+     * Class CustomFlipbook (Universal 3D Engine)
      */
     class CustomFlipbook {
-        constructor(container, images, startIndex = 0) {
+        constructor(container, images, startIndex = 0, isSingleMode = false) {
             this.container = container;
             this.images = images;
-            this.currentLeaf = 0;
-            this.totalLeafs = Math.ceil(images.length / 2);
-            this.leafs = [];
+            this.isSingleMode = isSingleMode;
 
-            this.init(startIndex);
+            // En Single Mode: 1 imagen = 1 hoja (Leaf). Total Leafs = N imágenes.
+            // En Spread Mode: 2 imágenes = 1 hoja (Front/Back). Total Leafs = N/2.
+            this.totalLeafs = this.isSingleMode ? images.length : Math.ceil(images.length / 2);
+
+            // Current Leaf Index (0..N)
+            this.currentLeaf = 0;
+            if (startIndex > 0) {
+                this.currentLeaf = this.isSingleMode ? startIndex : Math.floor(startIndex / 2);
+            }
+
+            this.leafs = [];
+            this.init();
         }
 
-        init(startIndex) {
+        init() {
             this.stage = document.createElement('div');
-            this.stage.className = 'book-stage';
+            this.stage.className = `book-stage ${this.isSingleMode ? 'single-mode' : 'spread-mode'}`;
 
-            // Calcular tamaño óptimo (Mantiene ratio A4 aprox)
-            const stageHeight = Math.min(window.innerHeight * 0.9, 800);
-            const stageWidth = stageHeight * 0.70 * 2; // *2 porque son 2 páginas abiertas
-            // Pero en CSS la "leaf" es width 50% de stage?
-            // MI ESTRATEGIA: El stage es el "libro abierto".
-            // Una "leaf" es la mitad derecha.
-
-            this.stage.style.width = `${stageWidth}px`;
-            this.stage.style.height = `${stageHeight}px`;
-
-            // Construir hojas (Leaves)
-            // Leaf 0: Front=Img0, Back=Img1. (En libro real: Leaf 0 Front es Portada Derecha. Leaf 0 Back es Pag 2 Izquierda)
-            // Espera, estructura libro:
-            // Spread 0: [Vacío | Portada(0)] -> Leaf 0
-            // Spread 1: [Pag 1 | Pag 2] -> Leaf 1?
-
-            // Simplicidad:
-            // Leaf 0: Recto=Img0 (Portada), Verso=Img1
-            // Leaf 1: Recto=Img2, Verso=Img3
-            // ...
-            // Inicialmente todas están a la derecha (stack).
-            // Flip Leaf 0 -> Img0 se va a la izquierda (oculta), vemos Img1 a la izquierda.
-
+            // Construir hojas
             for (let i = 0; i < this.totalLeafs; i++) {
                 const leaf = document.createElement('div');
                 leaf.className = 'book-leaf';
-                // Leaf position: Absolute Right side (50% left, 50% width)
-                leaf.style.left = '50%';
-                leaf.style.width = '50%';
-                leaf.style.zIndex = this.totalLeafs - i; // Stack order: 0 on top
 
-                // Front Face (Recto)
+                // Z-Index inicial: Las primeras arriba.
+                leaf.style.zIndex = this.totalLeafs - i + 10;
+
+                // Configuración Front/Back
                 const front = document.createElement('div');
                 front.className = 'book-page front';
-                this.mkImg(front, this.images[i * 2]);
-
-                // Back Face (Verso)
                 const back = document.createElement('div');
                 back.className = 'book-page back';
-                this.mkImg(back, this.images[i * 2 + 1]);
+
+                if (this.isSingleMode) {
+                    // MODO SINGLE: 
+                    // Leaf i Front = Image i
+                    // Leaf i Back = Decoración (se va fuera de pantalla)
+                    this.mkImg(front, this.images[i]);
+                    back.style.backgroundColor = '#ddd'; // Reverso gris
+                } else {
+                    // MODO SPREAD:
+                    // Leaf i Front = Image i*2
+                    // Leaf i Back = Image i*2+1
+                    this.mkImg(front, this.images[i * 2]);
+                    this.mkImg(back, this.images[i * 2 + 1]);
+                }
 
                 leaf.appendChild(front);
                 leaf.appendChild(back);
                 this.stage.appendChild(leaf);
                 this.leafs.push(leaf);
+
+                // Si la página inicial es avanzada, setear estado sin animación
+                if (i < this.currentLeaf) {
+                    leaf.classList.add('flipped');
+                    // Corrección Z-Index para hojas ya volteadas:
+                    // Deben ir debajo de la pila izquierda en orden inverso? 
+                    // No, Leaf 0 (Flipped) < Leaf 1 (Flipped). 
+                    // Pila Izquierda: Bottom->Top: 0, 1, 2...
+                    leaf.style.zIndex = 100 + i;
+                }
             }
 
             this.container.appendChild(this.stage);
-            setTimeout(() => this.stage.classList.add('loaded'), 10);
 
-            // Ir a página inicial si necesario
-            if (startIndex > 0) {
-                // Approximate spread
-                const targetLeaf = Math.floor(startIndex / 2);
-                for (let i = 0; i < targetLeaf; i++) {
-                    this.flipPage('next', false); // No animation
-                }
-            }
+            // Layout inicial
+            this.resize(this.isSingleMode);
+
+            setTimeout(() => this.stage.classList.add('loaded'), 50);
+        }
+
+        resize(isSingle) {
+            this.isSingleMode = isSingle;
+            this.stage.className = `book-stage ${this.isSingleMode ? 'single-mode' : 'spread-mode'}`;
+            // Recalcular dimensiones CSS si fuera necesario
+            // CSS classes .single-mode vs .spread-mode manejan el layout (ver CSS)
         }
 
         mkImg(container, src) {
-            if (!src) {
-                container.style.backgroundColor = '#f3f3f3'; // End paper
-                return;
-            }
+            if (!src) return;
             const img = document.createElement('img');
             img.src = src;
             container.appendChild(img);
@@ -229,53 +201,45 @@
             this.flipPage('prev');
         }
 
-        flipPage(dir, animate = true) {
+        flipPage(dir) {
             if (dir === 'next') {
                 const leaf = this.leafs[this.currentLeaf];
+                if (!leaf) return;
 
-                if (animate) {
-                    leaf.style.transition = 'transform 1s cubic-bezier(0.645, 0.045, 0.355, 1)';
-                    // Z-index High during flight
-                    const baseZ = this.totalLeafs - this.currentLeaf;
-                    leaf.style.zIndex = baseZ + 100;
+                leaf.style.transition = 'transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1)';
 
-                    setTimeout(() => {
-                        // Landed on left stack
-                        // Left stack order: 0 bottom, 1 top.
-                        // zIndex = currentLeaf.
-                        leaf.style.zIndex = this.currentLeaf;
-                    }, 500); // Mitad de la animación
-                } else {
-                    leaf.style.transition = 'none';
-                    leaf.style.zIndex = this.currentLeaf; // Instant land
-                }
+                // Z-Index durante vuelo: ¡Debe estar encima de todo!
+                leaf.style.zIndex = 1000;
 
                 leaf.classList.add('flipped');
+
+                // Al terminar, ajustar z-index para apilarse correctamente a la izquierda
+                const myIndex = this.currentLeaf;
+                setTimeout(() => {
+                    leaf.style.zIndex = 100 + myIndex; // 100 base para flipped stack
+                }, 400); // A mitad de camino
+
                 this.currentLeaf++;
 
             } else {
                 this.currentLeaf--;
                 const leaf = this.leafs[this.currentLeaf];
+                if (!leaf) return;
 
-                if (animate) {
-                    leaf.style.transition = 'transform 1s cubic-bezier(0.645, 0.045, 0.355, 1)';
-                    // Flight Z handling
-                    leaf.style.zIndex = this.totalLeafs + 100;
-
-                    setTimeout(() => {
-                        // Landed on right stack
-                        leaf.style.zIndex = this.totalLeafs - this.currentLeaf;
-                    }, 500);
-                } else {
-                    leaf.style.transition = 'none';
-                    leaf.style.zIndex = this.totalLeafs - this.currentLeaf;
-                }
+                leaf.style.transition = 'transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1)';
+                leaf.style.zIndex = 1000; // Vuelo retorno
 
                 leaf.classList.remove('flipped');
+
+                const myIndex = this.currentLeaf;
+                setTimeout(() => {
+                    leaf.style.zIndex = this.totalLeafs - myIndex + 10; // Restaurar orden original derecho
+                }, 400);
             }
 
-            // Callback externo para UI
-            if (window.updateExternalUI) window.updateExternalUI(this.currentLeaf * 2);
+            // Callback UI
+            const realPage = this.isSingleMode ? this.currentLeaf : this.currentLeaf * 2;
+            if (window.updateExternalUI) window.updateExternalUI(realPage);
         }
 
         destroy() {

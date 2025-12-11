@@ -13,17 +13,28 @@
     /* Importante para el 3D */
 }
 
-/* --- MODO DESKTOP (Custom 3D Engine) --- */
+/* --- MODO DESKTOP & MOBILE 3D (Custom 3D Engine) --- */
 
 .book-stage {
     position: relative;
-    width: 60vh;
-    /* Base inicial, JS ajustará */
-    height: 85vh;
+    /* Las dimensiones base se calculan en JS, pero aquí definimos comportamiento */
     perspective: 2000px;
     transform-style: preserve-3d;
     opacity: 0;
     transition: opacity 0.5s ease;
+}
+
+.book-stage.spread-mode {
+    /* En modo spread, el libro ocupa ancho doble */
+    width: 60vh;
+    /* Base */
+}
+
+.book-stage.single-mode {
+    /* En modo single, ancho completo del contenedor (móvil) */
+    width: 90vw !important;
+    height: 70vh !important;
+    /* Ajuste visual mejor para retrato */
 }
 
 .book-stage.loaded {
@@ -33,14 +44,21 @@
 .book-leaf {
     position: absolute;
     top: 0;
-    left: 0;
-    width: 100%;
     height: 100%;
     transform-origin: left center;
     transform-style: preserve-3d;
-    transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-    /* Curva suave "bezier ease-in-out" */
-    z-index: 10;
+    transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+/* Modos de Hoja */
+.spread-mode .book-leaf {
+    left: 50%;
+    width: 50%;
+}
+
+.single-mode .book-leaf {
+    left: 0;
+    width: 100%;
 }
 
 .book-leaf.flipped {

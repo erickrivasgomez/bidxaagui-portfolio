@@ -1,6 +1,5 @@
 /* ============================================
-   FLIPBOOK HYBRID STYLES
-   Soporta modo 3D (StPageFlip) y modo Slider (Mobile)
+   FLIPBOOK HYBRID STYLES v2 (Custom Engine)
    ============================================ */
 
 #flipbook-container {
@@ -10,49 +9,132 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    /* Importante para el 3D */
 }
 
-/* --- MODO DESKTOP (StPageFlip) --- */
-.stf__parent {
-    /* El contenedor que crea StPageFlip */
-    position: relative !important;
+/* --- MODO DESKTOP (Custom 3D Engine) --- */
+
+.book-stage {
+    position: relative;
+    width: 60vh;
+    /* Base inicial, JS ajustará */
+    height: 85vh;
+    perspective: 2000px;
+    transform-style: preserve-3d;
+    opacity: 0;
+    transition: opacity 0.5s ease;
 }
 
-/* --- MODO MOBILE (Native Slider) --- */
+.book-stage.loaded {
+    opacity: 1;
+}
+
+.book-leaf {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+    /* Curva suave "bezier ease-in-out" */
+    z-index: 10;
+}
+
+.book-leaf.flipped {
+    transform: rotateY(-180deg);
+}
+
+/* Caras de la hoja */
+.book-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.book-page.front {
+    /* La cara frontal */
+    z-index: 2;
+}
+
+.book-page.back {
+    /* La cara trasera */
+    transform: rotateY(180deg);
+    z-index: 1;
+    background-color: #f8f8f8;
+    /* Ligeramente diferente para realismo */
+}
+
+/* Imágenes */
+.book-page img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.05);
+    /* Sombra interna sutil */
+}
+
+/* Sombras Dinámicas (Gradient Overlay) */
+.book-page::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: opacity 1.2s ease;
+    pointer-events: none;
+    opacity: 0;
+}
+
+/* Sombra en el lomo cuando está cerrada */
+.book-leaf:not(.flipped) .front::after {
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 10%);
+    opacity: 1;
+}
+
+.book-leaf.flipped .back::after {
+    background: linear-gradient(to left, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 10%);
+    opacity: 1;
+}
+
+/* Ajuste de Z-Index para páginas estáticas (JS manejará esto dinámicamente, pero base aquí) */
+
+/* --- MODO MOBILE (Native Slider) - MANTENIDO IGUAL --- */
 .mobile-slider-container {
     width: 100%;
     height: 100%;
     overflow-x: scroll;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
-    /* Magia nativa para el snap */
     display: flex;
     -webkit-overflow-scrolling: touch;
-    /* Inercia en iOS */
     scrollbar-width: none;
-    /* Ocultar scrollbar Firefox */
     scroll-behavior: smooth;
     align-items: center;
-    /* Centrar verticalmente */
 }
 
-/* Ocultar barra de scroll en Chrome/Safari */
 .mobile-slider-container::-webkit-scrollbar {
     display: none;
 }
 
 .mobile-slider-page {
     flex: 0 0 100%;
-    /* Cada página ocupa el 100% del ancho */
     width: 100%;
     height: 90%;
-    /* Un poco de margen vertical */
     scroll-snap-align: center;
     scroll-snap-stop: always;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
 }
 
 .mobile-slider-page img {
@@ -60,7 +142,6 @@
     max-height: 100%;
     object-fit: contain;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    /* Prevenir arrastre de imagen fantasma */
     user-select: none;
     -webkit-user-drag: none;
 }
@@ -69,12 +150,11 @@
 .flipbook-controls {
     position: absolute;
     bottom: 20px;
-    /* Margen desde el fondo */
     left: 0;
     width: 100%;
     height: 60px;
     pointer-events: none;
-    z-index: 50;
+    z-index: 100;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -85,20 +165,15 @@
     align-items: center;
     gap: 16px;
     background: rgba(20, 20, 20, 0.6);
-    /* Fondo oscuro semitransparente */
     padding: 8px 24px;
     border-radius: 50px;
-    /* Cápsula completa */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     pointer-events: all;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.3s ease;
 }
-
-/* Ocultar controles al hacer inactividad si se desea */
-/* .flipbook-container:not(:hover) .flipbook-nav-container { opacity: 0.5; } */
 
 .flipbook-nav {
     background: transparent;
@@ -122,23 +197,16 @@
     transform: scale(1.1);
 }
 
-.flipbook-nav:active {
-    transform: scale(0.95);
-}
-
 .flipbook-nav:disabled {
     opacity: 0.3;
-    cursor: default;
-    transform: none;
+    pointer-events: none;
 }
 
 .flipbook-counter {
     color: white;
     font-size: 14px;
     font-weight: 500;
-    letter-spacing: 0.5px;
     font-variant-numeric: tabular-nums;
-    /* Evita que salte el ancho al cambiar números */
     min-width: 60px;
     text-align: center;
 }

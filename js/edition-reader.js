@@ -1,7 +1,7 @@
 /**
- * Edition Reader - Hybrid Engine
- * Desktop/Landscape: StPageFlip (3D)
- * Mobile Portrait: Native Slider (2D Performance)
+ * Edition Reader - Hybrid Engine v2 (Custom 3D + Native Slider)
+ * Desktop/Landscape: Custom 3D CSS Engine (No external lib)
+ * Mobile Portrait: Native Slider (Performance)
  */
 
 (function () {
@@ -20,39 +20,27 @@
 
     // Estado Global
     let currentState = {
-        mode: null, // 'mobile' | 'desktop'
-        pages: [],
+        mode: null,
+        pages: [], // Array de objetos {imagen_url}
         currentPage: 0,
         totalPages: 0,
-        flipInstance: null, // Instancia de StPageFlip
-        sliderElement: null // Referencia al slider móvil
+        engine: null, // Instancia de CustomFlipbook o referencia al slider
     };
 
     /**
      * Entry Point: Abrir el lector
      */
     async function openReader(editionId) {
-        // Reset Estado
-        currentState = {
-            mode: null,
-            pages: [],
-            currentPage: 0,
-            totalPages: 0,
-            flipInstance: null,
-            sliderElement: null
-        };
+        currentState = { mode: null, pages: [], currentPage: 0, totalPages: 0, engine: null };
 
-        // UI Inicial
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
         loading.style.display = 'flex';
 
-        // Limpiar contenedor previo
         const container = getContainer();
         container.innerHTML = '';
 
         try {
-            // 1. Fetch Datos
             const response = await fetch(`${API_URL}/api/ediciones/${editionId}/pages`);
             if (!response.ok) throw new Error('Error de red');
             const data = await response.json();
@@ -62,68 +50,57 @@
 
             if (currentState.pages.length === 0) throw new Error('Edición sin páginas');
 
-            // 2. Precarga inteligente (primeras 3 páginas)
-            await preloadImages(currentState.pages.slice(0, 3));
+            await preloadImages(currentState.pages.slice(0, 4)); // Cargar primeras 4
 
             loading.style.display = 'none';
 
-            // 3. Decidir e iniciar motor
             initEngine();
 
-            // 4. Listener de Resize (Rotación)
             window.addEventListener('resize', handleResize);
 
         } catch (error) {
             console.error(error);
-            loading.innerHTML = `<p>Error al cargar. <button onclick="location.reload()">Reintentar</button></p>`;
+            loading.innerHTML = `<p>Error. <button onclick="location.reload()">Reintentar</button></p>`;
         }
     }
 
     /**
-     * Decide qué motor usar según el tamaño de pantalla
+     * Motor Select
      */
     function initEngine() {
         const isMobilePortrait = window.matchMedia("(max-width: 768px) and (orientation: portrait)").matches;
         const targetMode = isMobilePortrait ? 'mobile' : 'desktop';
 
-        // Si ya estamos en el modo correcto, no hacer nada (o solo resize)
-        if (currentState.mode === targetMode && currentState.mode === 'desktop') {
-            // StPageFlip maneja su propio resize, a veces requiere update
-            if (currentState.flipInstance) currentState.flipInstance.updateFromHtml(document.querySelectorAll('.stf__item'));
-            return;
-        }
+        if (currentState.mode === targetMode) return;
 
-        // Si cambiamos de modo, destruir anterior
         destroyEngine();
         currentState.mode = targetMode;
 
         const container = getContainer();
 
         if (targetMode === 'mobile') {
-            console.log('🚀 Iniciando Motor: Mobile Slider');
             initMobileSlider(container);
         } else {
-            console.log('🚀 Iniciando Motor: Desktop 3D Flip');
-            initDesktopFlip(container);
+            console.log('🚀 Iniciando Custom 3D Engine');
+            // Mapear solo URLs para el constructor
+            const imageUrls = currentState.pages.map(p => `${API_URL}/api/images/${p.imagen_url}`);
+            currentState.engine = new CustomFlipbook(container, imageUrls, currentState.currentPage);
         }
 
-        createControls(container);
-        updateUI(0); // Empezar en pag 0
+        createControls();
+        updateUI(currentState.currentPage);
     }
 
     /**
-     * Motor 1: Mobile Native Slider (Swipe nativo perfecto)
+     * Motor 1: Mobile Native Slider
      */
     function initMobileSlider(container) {
         const slider = document.createElement('div');
         slider.className = 'mobile-slider-container';
 
-        // Renderizar todas las páginas
         currentState.pages.forEach((page, index) => {
             const pageDiv = document.createElement('div');
             pageDiv.className = 'mobile-slider-page';
-
-            // Lazy load simple
             const img = document.createElement('img');
             img.src = `${API_URL}/api/images/${page.imagen_url}`;
             if (index > 2) img.loading = "lazy";
@@ -132,87 +109,184 @@
             slider.appendChild(pageDiv);
         });
 
-        // Evento de Scroll para detectar cambio de página
-        let scrollTimeout;
-        slider.addEventListener('scroll', () => {
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-                const pageWidth = slider.clientWidth;
-                const scrollLeft = slider.scrollLeft;
-                const newIndex = Math.round(scrollLeft / pageWidth);
+        slider.addEventListener('scroll', debounce(() => {
+            const pageWidth = slider.clientWidth;
+            const scrollLeft = slider.scrollLeft;
+            const newIndex = Math.round(scrollLeft / pageWidth);
 
-                if (newIndex !== currentState.currentPage) {
-                    currentState.currentPage = newIndex;
-                    updateUI(newIndex);
-                }
-            }, 50); // Debounce pequeño
-        }, { passive: true });
+            if (newIndex !== currentState.currentPage) {
+                currentState.currentPage = newIndex;
+                updateUI(newIndex);
+            }
+        }, 50), { passive: true });
 
-        // Guardar referencia
-        currentState.sliderElement = slider;
+        currentState.engine = slider;
         container.appendChild(slider);
-    }
 
-    /**
-     * Motor 2: StPageFlip (Desktop/Landscape)
-     */
-    function initDesktopFlip(container) {
-        // Preparar HTML para StPageFlip
-        container.innerHTML = ''; // Limpiar slider si había
-
-        // Crear elementos requeridos por la librería
-        currentState.pages.forEach((page, index) => {
-            const div = document.createElement('div');
-            div.className = 'stf__item';
-            div.dataset.density = index === 0 ? 'hard' : 'soft';
-
-            const img = document.createElement('img');
-            img.src = `${API_URL}/api/images/${page.imagen_url}`;
-            img.style.cssText = "width:100%; height:100%; object-fit: cover;";
-
-            div.appendChild(img);
-            container.appendChild(div);
-        });
-
-        // Configuración 3D
-        const width = Math.min(600, window.innerWidth * 0.45);
-        const height = width * 1.41; // A4 Ratio aprox
-
-        try {
-            const flip = new St.PageFlip(container, {
-                width: width,
-                height: height,
-                size: 'fixed', // 'stretch' a veces falla en resize
-                minWidth: 300,
-                maxWidth: 1000,
-                minHeight: 400,
-                maxHeight: 1600,
-                maxShadowOpacity: 0.5,
-                showCover: true,
-                mobileScrollSupport: false,
-                flippingTime: 1000,
-                usePortrait: false, // En desktop siempre queremos spread si es posible
-                startPage: currentState.currentPage // Restaurar página si venimos de rotación
-            });
-
-            flip.loadFromHTML(container.querySelectorAll('.stf__item'));
-
-            flip.on('flip', (e) => {
-                currentState.currentPage = e.data;
-                updateUI(e.data);
-            });
-
-            currentState.flipInstance = flip;
-        } catch (e) {
-            console.error("Fallo al iniciar StPageFlip", e);
+        // Restaurar posición si aplica
+        if (currentState.currentPage > 0) {
+            setTimeout(() => {
+                slider.scrollTo({ left: currentState.currentPage * slider.clientWidth });
+            }, 50);
         }
     }
 
     /**
-     * UI: Controles y Actualización
+     * Class CustomFlipbook (Desktop Engine)
      */
-    function createControls(parent) {
-        // Encontrar o crear wrapper de controles en el modal (fuera del container mutable)
+    class CustomFlipbook {
+        constructor(container, images, startIndex = 0) {
+            this.container = container;
+            this.images = images;
+            this.currentLeaf = 0;
+            this.totalLeafs = Math.ceil(images.length / 2);
+            this.leafs = [];
+
+            this.init(startIndex);
+        }
+
+        init(startIndex) {
+            this.stage = document.createElement('div');
+            this.stage.className = 'book-stage';
+
+            // Calcular tamaño óptimo (Mantiene ratio A4 aprox)
+            const stageHeight = Math.min(window.innerHeight * 0.9, 800);
+            const stageWidth = stageHeight * 0.70 * 2; // *2 porque son 2 páginas abiertas
+            // Pero en CSS la "leaf" es width 50% de stage?
+            // MI ESTRATEGIA: El stage es el "libro abierto".
+            // Una "leaf" es la mitad derecha.
+
+            this.stage.style.width = `${stageWidth}px`;
+            this.stage.style.height = `${stageHeight}px`;
+
+            // Construir hojas (Leaves)
+            // Leaf 0: Front=Img0, Back=Img1. (En libro real: Leaf 0 Front es Portada Derecha. Leaf 0 Back es Pag 2 Izquierda)
+            // Espera, estructura libro:
+            // Spread 0: [Vacío | Portada(0)] -> Leaf 0
+            // Spread 1: [Pag 1 | Pag 2] -> Leaf 1?
+
+            // Simplicidad:
+            // Leaf 0: Recto=Img0 (Portada), Verso=Img1
+            // Leaf 1: Recto=Img2, Verso=Img3
+            // ...
+            // Inicialmente todas están a la derecha (stack).
+            // Flip Leaf 0 -> Img0 se va a la izquierda (oculta), vemos Img1 a la izquierda.
+
+            for (let i = 0; i < this.totalLeafs; i++) {
+                const leaf = document.createElement('div');
+                leaf.className = 'book-leaf';
+                // Leaf position: Absolute Right side (50% left, 50% width)
+                leaf.style.left = '50%';
+                leaf.style.width = '50%';
+                leaf.style.zIndex = this.totalLeafs - i; // Stack order: 0 on top
+
+                // Front Face (Recto)
+                const front = document.createElement('div');
+                front.className = 'book-page front';
+                this.mkImg(front, this.images[i * 2]);
+
+                // Back Face (Verso)
+                const back = document.createElement('div');
+                back.className = 'book-page back';
+                this.mkImg(back, this.images[i * 2 + 1]);
+
+                leaf.appendChild(front);
+                leaf.appendChild(back);
+                this.stage.appendChild(leaf);
+                this.leafs.push(leaf);
+            }
+
+            this.container.appendChild(this.stage);
+            setTimeout(() => this.stage.classList.add('loaded'), 10);
+
+            // Ir a página inicial si necesario
+            if (startIndex > 0) {
+                // Approximate spread
+                const targetLeaf = Math.floor(startIndex / 2);
+                for (let i = 0; i < targetLeaf; i++) {
+                    this.flipPage('next', false); // No animation
+                }
+            }
+        }
+
+        mkImg(container, src) {
+            if (!src) {
+                container.style.backgroundColor = '#f3f3f3'; // End paper
+                return;
+            }
+            const img = document.createElement('img');
+            img.src = src;
+            container.appendChild(img);
+        }
+
+        flipNext() {
+            if (this.currentLeaf >= this.totalLeafs) return;
+            this.flipPage('next');
+        }
+
+        flipPrev() {
+            if (this.currentLeaf <= 0) return;
+            this.flipPage('prev');
+        }
+
+        flipPage(dir, animate = true) {
+            if (dir === 'next') {
+                const leaf = this.leafs[this.currentLeaf];
+
+                if (animate) {
+                    leaf.style.transition = 'transform 1s cubic-bezier(0.645, 0.045, 0.355, 1)';
+                    // Z-index High during flight
+                    const baseZ = this.totalLeafs - this.currentLeaf;
+                    leaf.style.zIndex = baseZ + 100;
+
+                    setTimeout(() => {
+                        // Landed on left stack
+                        // Left stack order: 0 bottom, 1 top.
+                        // zIndex = currentLeaf.
+                        leaf.style.zIndex = this.currentLeaf;
+                    }, 500); // Mitad de la animación
+                } else {
+                    leaf.style.transition = 'none';
+                    leaf.style.zIndex = this.currentLeaf; // Instant land
+                }
+
+                leaf.classList.add('flipped');
+                this.currentLeaf++;
+
+            } else {
+                this.currentLeaf--;
+                const leaf = this.leafs[this.currentLeaf];
+
+                if (animate) {
+                    leaf.style.transition = 'transform 1s cubic-bezier(0.645, 0.045, 0.355, 1)';
+                    // Flight Z handling
+                    leaf.style.zIndex = this.totalLeafs + 100;
+
+                    setTimeout(() => {
+                        // Landed on right stack
+                        leaf.style.zIndex = this.totalLeafs - this.currentLeaf;
+                    }, 500);
+                } else {
+                    leaf.style.transition = 'none';
+                    leaf.style.zIndex = this.totalLeafs - this.currentLeaf;
+                }
+
+                leaf.classList.remove('flipped');
+            }
+
+            // Callback externo para UI
+            if (window.updateExternalUI) window.updateExternalUI(this.currentLeaf * 2);
+        }
+
+        destroy() {
+            this.container.innerHTML = '';
+        }
+    }
+
+    /**
+     * UI & Events
+     */
+    function createControls() {
         let controlsDiv = modal.querySelector('.flipbook-controls');
         if (controlsDiv) controlsDiv.remove();
 
@@ -220,75 +294,61 @@
         controlsDiv.className = 'flipbook-controls';
         controlsDiv.innerHTML = `
             <div class="flipbook-nav-container">
-                <button class="nav-btn prev" aria-label="Anterior">
+                <button class="flipbook-nav prev" aria-label="Anterior">
                     <i class="fas fa-chevron-left"></i>
                 </button>
                 <div class="flipbook-counter">
                     <span id="page-curr">1</span> / <span id="page-total">${currentState.totalPages}</span>
                 </div>
-                <button class="nav-btn next" aria-label="Siguiente">
+                <button class="flipbook-nav next" aria-label="Siguiente">
                     <i class="fas fa-chevron-right"></i>
                 </button>
             </div>
         `;
 
-        // Listeners Botones
         const prevBtn = controlsDiv.querySelector('.prev');
         const nextBtn = controlsDiv.querySelector('.next');
 
-        prevBtn.onclick = () => navigate('prev');
-        nextBtn.onclick = () => navigate('next');
+        prevBtn.onclick = (e) => { e.stopPropagation(); navigate('prev'); };
+        nextBtn.onclick = (e) => { e.stopPropagation(); navigate('next'); };
 
-        // Insertar controles en el modal content (no en el container del flipbook que se borra)
         modal.querySelector('.reader-modal-content').appendChild(controlsDiv);
     }
 
-    function navigate(direction) {
+    function navigate(dir) {
         if (currentState.mode === 'mobile') {
-            // Navegación Slider
-            const slider = currentState.sliderElement;
-            const pageWidth = slider.clientWidth;
-            const targetPage = direction === 'next'
-                ? currentState.currentPage + 1
-                : currentState.currentPage - 1;
-
+            const slider = currentState.engine;
+            const targetPage = dir === 'next' ? currentState.currentPage + 1 : currentState.currentPage - 1;
             if (targetPage >= 0 && targetPage < currentState.totalPages) {
-                slider.scrollTo({
-                    left: targetPage * pageWidth,
-                    behavior: 'smooth'
-                });
-                // El evento scroll actualizará el estado
+                slider.scrollTo({ left: targetPage * slider.clientWidth, behavior: 'smooth' });
             }
         } else {
-            // Navegación 3D
-            if (currentState.flipInstance) {
-                direction === 'next'
-                    ? currentState.flipInstance.flipNext()
-                    : currentState.flipInstance.flipPrev();
-            }
+            // Desktop Custom
+            dir === 'next' ? currentState.engine.flipNext() : currentState.engine.flipPrev();
         }
     }
 
-    function updateUI(pageIndex) {
-        // Actualizar Textos
-        // Nota: página visual humana es index + 1
+    function updateUI(idx) {
         const currEl = document.getElementById('page-curr');
-        if (currEl) currEl.innerText = pageIndex + 1;
+        if (currEl) currEl.innerText = idx + 1;
 
-        // Actualizar botones (Deshabilitar extremos)
-        const prevBtn = modal.querySelector('.nav-btn.prev');
-        const nextBtn = modal.querySelector('.nav-btn.next');
-
-        if (prevBtn) prevBtn.disabled = pageIndex === 0;
-        if (nextBtn) {
-            // En modo desktop 2 páginas, el final es complejo, simplificamos:
-            nextBtn.disabled = pageIndex >= currentState.totalPages - 1;
-        }
+        // Expose callback for class
+        window.updateExternalUI = (newIdx) => {
+            currentState.currentPage = newIdx;
+            if (currEl) currEl.innerText = newIdx + 1;
+            updateButtons(newIdx);
+        };
+        updateButtons(idx);
     }
 
-    /**
-     * Utilidades
-     */
+    function updateButtons(idx) {
+        const prev = modal.querySelector('.flipbook-nav.prev');
+        const next = modal.querySelector('.flipbook-nav.next');
+        if (prev) prev.disabled = idx === 0;
+        if (next) next.disabled = idx >= currentState.totalPages - 1;
+    }
+
+    // Utilidades
     function getContainer() {
         let el = document.getElementById('flipbook-container');
         if (!el) {
@@ -300,61 +360,51 @@
     }
 
     function destroyEngine() {
-        if (currentState.flipInstance) {
-            currentState.flipInstance.destroy();
-            currentState.flipInstance = null;
-        }
-        if (currentState.sliderElement) {
-            currentState.sliderElement = null;
-        }
-        const container = document.getElementById('flipbook-container');
-        if (container) container.innerHTML = '';
+        if (currentState.engine && currentState.engine.destroy) currentState.engine.destroy();
+        const c = document.getElementById('flipbook-container');
+        if (c) c.innerHTML = '';
+        currentState.engine = null;
     }
 
     function closeReader() {
         modal.classList.remove('active');
         document.body.style.overflow = '';
         window.removeEventListener('resize', handleResize);
-        setTimeout(destroyEngine, 300); // Esperar animación cierre CSS
+        setTimeout(destroyEngine, 200);
     }
 
-    // Debounce resize
+    function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    }
+
     let resizeTimer;
     function handleResize() {
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-            initEngine(); // Re-evaluar qué motor usar
-        }, 200);
+        resizeTimer = setTimeout(initEngine, 200);
     }
 
-    function preloadImages(pagesSubset) {
-        return Promise.all(pagesSubset.map(page => {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = resolve;
-                img.onerror = resolve;
-                img.src = `${API_URL}/api/images/${page.imagen_url}`;
-            });
+    function preloadImages(pages) {
+        return Promise.all(pages.map(p => {
+            const i = new Image();
+            i.src = `${API_URL}/api/images/${p.imagen_url}`;
+            return new Promise(r => { i.onload = r; i.onerror = r; });
         }));
     }
 
-    // --- Inicialización de Eventos Globales ---
-
-    // Abrir (Delegación de eventos o directo si ya existen cards)
+    // Init Events
     document.querySelectorAll('.edition-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-            // Buscar ID
-            const id = card.dataset.editionId;
-            if (id) openReader(id);
-        });
+        card.addEventListener('click', () => openReader(card.dataset.editionId));
     });
 
-    // Cerrar
     closeBtn.addEventListener('click', closeReader);
     overlay.addEventListener('click', closeReader);
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeReader();
         if (!modal.classList.contains('active')) return;
+        if (e.key === 'Escape') closeReader();
         if (e.key === 'ArrowRight') navigate('next');
         if (e.key === 'ArrowLeft') navigate('prev');
     });

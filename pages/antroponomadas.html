@@ -188,8 +188,8 @@
           <!-- Próxima edición -->
           <div class="gallery-item edition-card-disabled">
             <i class="fas fa-hourglass-half edition-icon"></i>
-            <span>Edición 3 - Próximamente</span>
-            <p class="edition-hint">En preparación</p>
+            <span>Siguiente edición</span>
+            <p class="edition-hint">Próximamente</p>
           </div>
         </div>
       </div>
@@ -276,7 +276,7 @@
         align-items: center;
         background-color: #f5f5f5;
         border-radius: 8px;
-        padding: 20px;
+        padding: 8px;
         text-align: center;
       }
       
@@ -291,19 +291,11 @@
     document.addEventListener('DOMContentLoaded', function() {
       // Manejadores de clic para las tarjetas de edición
       document.querySelectorAll('.edition-card').forEach(card => {
-        card.addEventListener('click', function() {
-          const editionId = this.getAttribute('data-edition-id');
-          window.location.href = `/leer/${editionId}`;
-        });
-
-        // Soporte para teclado
-        card.addEventListener('keypress', function(e) {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            const editionId = this.getAttribute('data-edition-id');
-            window.location.href = `/leer/${editionId}`;
-          }
-        });
+        // Mantener el estilo de cursor por defecto
+        card.style.cursor = 'default';
+        
+        // Agregar clase para indicar estado inactivo
+        card.classList.add('edition-card-disabled');
       });
     });
     </script>

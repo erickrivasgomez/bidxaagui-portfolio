@@ -37,7 +37,6 @@
 
         // Mostrar loading
         loading.style.display = 'flex';
-        iframe.style.display = 'none';
 
         // Configurar iframe
         iframe.src = readerUrl;
@@ -46,9 +45,8 @@
         iframe.onload = function () {
             setTimeout(() => {
                 loading.style.display = 'none';
-                iframe.style.display = 'block';
                 iframe.classList.add('loaded');
-            }, 500); // Pequeño delay para transición suave
+            }, 800); // Delay para permitir que el flipbook se inicialice
         };
 
         // Manejar errores de carga

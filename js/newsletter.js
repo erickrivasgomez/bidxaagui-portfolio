@@ -1,7 +1,6 @@
-
   const form = document.getElementById("newsletter-form");
   const msg = document.getElementById("newsletter-msg");
-  const workerUrl = "https://bidxaagui-newsletter.rivaserick.workers.dev/subscribe";
+  const workerUrl = "/api/newsletter/subscribe";
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();

@@ -1,18 +1,20 @@
   const form = document.getElementById("newsletter-form");
-  const msg = document.getElementById("newsletter-msg");
-  const workerUrl = "/api/newsletter/subscribe";
+const msg = document.getElementById("newsletter-msg");
+// Usar el subdominio personalizado
+const workerUrl = "https://api.bidxaagui.com/api/newsletter/subscribe";
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    msg.textContent = "Enviando…";
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  msg.textContent = "Enviando…";
 
+  try {
     const name = form.elements["name"].value.trim();
     const email = form.elements["email"].value.trim();
 
     const res = await fetch(workerUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email }),
+      body: JSON.stringify({ name, email })
     });
 
     const data = await res.json();
@@ -25,7 +27,12 @@
       msg.style.color = "red";
       msg.textContent = data.error || "No se pudo suscribir. Intenta más tarde.";
     }
-  });
+  } catch (error) {
+    console.error('Error al enviar el formulario:', error);
+    msg.style.color = "red";
+    msg.textContent = "Error al conectar con el servidor. Intenta nuevamente.";
+  }
+});
 /*
 {
   "d1_databases": [

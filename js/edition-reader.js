@@ -125,10 +125,13 @@
             this.stage = document.createElement('div');
             this.stage.className = `book-stage ${this.isSingleMode ? 'single-mode' : 'spread-mode'}`;
 
-            // Construir hojas (DOM structure only, no images yet)
+            // Construir hojas
             for (let i = 0; i < this.totalLeafs; i++) {
                 const leaf = document.createElement('div');
-                leaf.className = 'book-leaf';
+                // Asignar clase Hard/Soft
+                const isCover = (i === 0 || i === this.totalLeafs - 1);
+                leaf.className = `book-leaf ${isCover ? 'hard-cover' : 'soft-page'}`;
+
                 leaf.style.zIndex = this.totalLeafs - i + 10;
 
                 // Ocultar hojas lejanas para ahorrar memoria GPU (CRÍTICO PARA IOS)
@@ -240,20 +243,21 @@
                     this.loadLeafImages(this.leafs[this.currentLeaf + 1]);
                 }
 
-                leaf.style.transition = 'transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1)';
-
-                // Z-Index durante vuelo: ¡Debe estar encima de todo!
+                // leaf.style.transition = ...  <-- ELIMINADO para usar CSS classes
                 leaf.style.zIndex = 1000;
-
                 leaf.classList.add('flipped');
 
-                // Al terminar, ajustar z-index para apilarse correctamente a la izquierda
                 const myIndex = this.currentLeaf;
+
+                // Tiempo de espera dinámico según tipo de hoja
+                const isHard = leaf.classList.contains('hard-cover');
+                const timeout = isHard ? 600 : 350; // Ajustado a la mitad de la transición CSS (1.2s vs 0.7s)
+
                 setTimeout(() => {
-                    leaf.style.zIndex = 100 + myIndex; // 100 base para flipped stack
+                    leaf.style.zIndex = 100 + myIndex;
                     // Limpieza post-animación
                     this.updateVisibility();
-                }, 400); // A mitad de camino
+                }, timeout);
 
                 this.currentLeaf++;
 
@@ -266,16 +270,18 @@
                 leaf.style.display = 'block';
                 this.loadLeafImages(leaf);
 
-                leaf.style.transition = 'transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1)';
-                leaf.style.zIndex = 1000; // Vuelo retorno
-
+                // leaf.style.transition = ... <-- ELIMINADO
+                leaf.style.zIndex = 1000;
                 leaf.classList.remove('flipped');
 
                 const myIndex = this.currentLeaf;
+                const isHard = leaf.classList.contains('hard-cover');
+                const timeout = isHard ? 600 : 350;
+
                 setTimeout(() => {
-                    leaf.style.zIndex = this.totalLeafs - myIndex + 10; // Restaurar orden original derecho
+                    leaf.style.zIndex = this.totalLeafs - myIndex + 10;
                     this.updateVisibility();
-                }, 400);
+                }, timeout);
             }
 
             // Callback UI

@@ -41,14 +41,27 @@
     opacity: 1;
 }
 
+/* Configuraciones de Hojas */
 .book-leaf {
     position: absolute;
     top: 0;
     height: 100%;
     transform-origin: left center;
     transform-style: preserve-3d;
-    transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
+
+/* --- ANIMACIONES DIFERENCIADAS --- */
+
+/* HARD COVER (Portada/Contraportada): Movimiento rígido, pesado y uniforme */
+.book-leaf.hard-cover {
+    transition: transform 1.2s ease-in-out;
+}
+
+/* SOFT PAGE (Interiores): Movimiento ágil, ligeramente elástico */
+.book-leaf.soft-page {
+    transition: transform 0.7s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
 
 /* Modos de Hoja */
 .spread-mode .book-leaf {
@@ -74,6 +87,7 @@
     height: 100%;
     backface-visibility: hidden;
     background-color: #fff;
+    /* Fondo blanco para evitar transparencias */
     overflow: hidden;
 }
 
@@ -90,17 +104,19 @@
     /* Ligeramente diferente para realismo */
 }
 
-/* Imágenes */
+/* Imágenes - CORRECCIÓN DE BORDES RECORTADOS */
 .book-page img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    /* CRÍTICO: Muestra toda la imagen sin recortar nada */
+    object-position: center;
     display: block;
-    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.05);
-    /* Sombra interna sutil */
+    /* Sombra interna sutil solo para dar profundidad */
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.02);
 }
 
-/* Sombras Dinámicas (Gradient Overlay) */
+/* Sombras Dinámicas (Solo para Soft Pages -> Efecto Curvatura) */
 .book-page::after {
     content: '';
     position: absolute;
@@ -108,19 +124,19 @@
     left: 0;
     width: 100%;
     height: 100%;
-    transition: opacity 1.2s ease;
+    transition: opacity 0.5s ease;
     pointer-events: none;
     opacity: 0;
 }
 
-/* Sombra en el lomo cuando está cerrada */
-.book-leaf:not(.flipped) .front::after {
-    background: linear-gradient(to right, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 10%);
+/* Sombra en el lomo (Solo Soft Pages) */
+.book-leaf.soft-page:not(.flipped) .front::after {
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0) 15%);
     opacity: 1;
 }
 
-.book-leaf.flipped .back::after {
-    background: linear-gradient(to left, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 10%);
+.book-leaf.soft-page.flipped .back::after {
+    background: linear-gradient(to left, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0) 15%);
     opacity: 1;
 }
 

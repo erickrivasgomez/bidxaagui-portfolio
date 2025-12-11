@@ -1,51 +1,78 @@
 /* ============================================
-   STPAGEFLIP CUSTOM STYLES
-   Estilos para el flipbook con librería StPageFlip
+   FLIPBOOK HYBRID STYLES
+   Soporta modo 3D (StPageFlip) y modo Slider (Mobile)
    ============================================ */
 
-/* Contenedor principal del flipbook */
+#flipbook-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- MODO DESKTOP (StPageFlip) --- */
 .stf__parent {
-    position: relative !important;
-    width: 100% !important;
-    height: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    z-index: 10 !important;
-}
-
-/* Wrapper del libro */
-.stf__wrapper {
-    box-shadow: 0 0 60px rgba(0, 0, 0, 0.5) !important;
+    /* El contenedor que crea StPageFlip */
     position: relative !important;
 }
 
-/* Páginas del libro */
-.stf__item {
-    background: white !important;
-    display: block !important;
+/* --- MODO MOBILE (Native Slider) --- */
+.mobile-slider-container {
+    width: 100%;
+    height: 100%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    /* Magia nativa para el snap */
+    display: flex;
+    -webkit-overflow-scrolling: touch;
+    /* Inercia en iOS */
+    scrollbar-width: none;
+    /* Ocultar scrollbar Firefox */
+    scroll-behavior: smooth;
+    align-items: center;
+    /* Centrar verticalmente */
 }
 
-.stf__item img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    display: block !important;
-    pointer-events: none !important;
+/* Ocultar barra de scroll en Chrome/Safari */
+.mobile-slider-container::-webkit-scrollbar {
+    display: none;
 }
 
-/* ============================================
-   CONTROLES DE NAVEGACIÓN
-   ============================================ */
+.mobile-slider-page {
+    flex: 0 0 100%;
+    /* Cada página ocupa el 100% del ancho */
+    width: 100%;
+    height: 90%;
+    /* Un poco de margen vertical */
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
 
+.mobile-slider-page img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    /* Prevenir arrastre de imagen fantasma */
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+/* --- CONTROLES DE NAVEGACIÓN --- */
 .flipbook-controls {
     position: absolute;
-    bottom: 0;
-    /* Al fondo */
+    bottom: 20px;
+    /* Margen desde el fondo */
     left: 0;
     width: 100%;
-    /* Altura definida para contener los botones */
-    height: 80px;
+    height: 60px;
     pointer-events: none;
     z-index: 50;
     display: flex;
@@ -53,146 +80,65 @@
     justify-content: center;
 }
 
-/* Contenedor Flex para agrupar botones y contador */
 .flipbook-nav-container {
     display: flex;
     align-items: center;
     gap: 16px;
-    background: rgba(0, 0, 0, 0.5);
-    /* Fondo sutil para el grupo */
-    padding: 8px 20px;
-    border-radius: 30px;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    margin-bottom: 20px;
-    /* Margen inferior */
+    background: rgba(20, 20, 20, 0.6);
+    /* Fondo oscuro semitransparente */
+    padding: 8px 24px;
+    border-radius: 50px;
+    /* Cápsula completa */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     pointer-events: all;
-    /* Permitir click */
     border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.flipbook-nav {
-    /* Reset de posición absoluta */
-    position: static;
-    transform: none;
+/* Ocultar controles al hacer inactividad si se desea */
+/* .flipbook-container:not(:hover) .flipbook-nav-container { opacity: 0.5; } */
 
+.flipbook-nav {
     background: transparent;
     color: white;
     border: none;
-    width: 32px;
-    /* Más pequeño */
-    height: 32px;
-    /* Más pequeño */
-    font-size: 18px;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
     cursor: pointer;
-    opacity: 0.7;
-    /* Transparecia por defecto */
-    transition: all 0.3s ease;
+    opacity: 0.8;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    user-select: none;
-    padding: 0;
     border-radius: 50%;
-    /* Circulares */
 }
 
 .flipbook-nav:hover {
-    background: rgba(255, 255, 255, 0.1);
-    opacity: 1 !important;
+    background: rgba(255, 255, 255, 0.2);
+    opacity: 1;
     transform: scale(1.1);
 }
 
+.flipbook-nav:active {
+    transform: scale(0.95);
+}
+
 .flipbook-nav:disabled {
-    opacity: 0.2;
-    cursor: not-allowed;
-}
-
-/* El estilo de los iconos internos */
-.flipbook-nav i {
-    pointer-events: none;
-}
-
-/* Contador de páginas - Estilo integrado */
-.flipbook-counter {
-    /* Reset */
-    position: static;
-    bottom: auto;
-    left: auto;
+    opacity: 0.3;
+    cursor: default;
     transform: none;
-    background: transparent;
-    border-radius: 0;
-    padding: 0 8px;
-    font-size: 0.85rem;
+}
+
+.flipbook-counter {
+    color: white;
+    font-size: 14px;
     font-weight: 500;
-    opacity: 0.9;
-}
-
-.flipbook-counter:hover {
-    opacity: 1;
-}
-
-/* ============================================
-   RESPONSIVE - MOBILE
-   ============================================ */
-
-@media (max-width: 768px) {
-    .flipbook-nav {
-        width: 40px;
-        height: 80px;
-        font-size: 24px;
-    }
-
-    .flipbook-prev {
-        left: 10px;
-    }
-
-    .flipbook-next {
-        right: 10px;
-    }
-
-    .flipbook-controls:hover .flipbook-nav,
-    .reader-modal-content:hover .flipbook-nav {
-        opacity: 0.6;
-    }
-
-    .flipbook-counter {
-        font-size: 0.85rem;
-        padding: 6px 12px;
-        bottom: 12px;
-    }
-}
-
-/* ============================================
-   ACCESIBILIDAD
-   ============================================ */
-
-.flipbook-nav:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.8);
-    outline-offset: 4px;
-}
-
-/* ============================================
-   SOMBRAS Y EFECTOS DE STPAGEFLIP
-   Estos estilos mejoran la apariencia por defecto
-   ============================================ */
-
-/* Sombra de las páginas durante el flip */
-.stf__block {
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
-}
-
-/* Cursor para indicar interactividad */
-.stf__wrapper {
-    cursor: grab;
-}
-
-.stf__wrapper:active {
-    cursor: grabbing;
-}
-
-/* Esquinas clickeables */
-.stf__hardPageCorner,
-.stf__pageCorner {
-    cursor: pointer;
+    letter-spacing: 0.5px;
+    font-variant-numeric: tabular-nums;
+    /* Evita que salte el ancho al cambiar números */
+    min-width: 60px;
+    text-align: center;
 }

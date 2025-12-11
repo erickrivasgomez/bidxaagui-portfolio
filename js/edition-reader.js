@@ -28,8 +28,8 @@
     function openReader(editionId) {
         currentEditionId = editionId;
 
-        // Construir URL del admin público
-        const readerUrl = `${ADMIN_URL}/public/editions/${editionId}/preview`;
+        // Construir URL del admin con el UUID de la edición
+        const readerUrl = `${ADMIN_URL}/editions/${editionId}/preview`;
 
         // Mostrar modal
         modal.classList.add('active');

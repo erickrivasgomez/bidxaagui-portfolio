@@ -8,16 +8,36 @@
 #book-container {
     width: 100%;
     height: 100%;
-    overflow: hidden;
-    /* Importante para que no se salga */
+    overflow: auto;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 20px 0;
 }
 
 /* El elemento DIV que PageFlip usa */
 #my-flipbook {
-    /* PageFlip setea dimensiones inline, pero esto ayuda */
+    max-width: 100%;
+    max-height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Ajustes para el contenedor de páginas en modo spread (2 páginas) */
+#my-flipbook .page {
+    max-height: 100%;
+}
+
+#my-flipbook .page .page-content {
+    max-height: 100%;
+    overflow: hidden;
+}
+
+#my-flipbook .page img {
+    max-height: 100%;
+    width: auto;
+    object-fit: contain;
 }
 
 /* Estilos de Páginas */
@@ -86,12 +106,14 @@
     z-index: 10001;
     width: 95vw;
     height: 90vh;
-    /* Ocupa casi toda la pantalla */
     max-width: 1600px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 /* --- Botón Cerrar (Solo X) --- */

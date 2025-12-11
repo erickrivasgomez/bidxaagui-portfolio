@@ -43,13 +43,70 @@
         width: 50%;
         height: 100%;
         position: relative;
+        background: transparent !important;
+        box-shadow: none !important;
     }
     
     .page img {
         width: 100%;
         height: 100%;
         object-fit: contain;
-        object-position: center;
+    }
+    
+    /* Asegurar que las páginas de la izquierda tengan la imagen alineada a la derecha */
+    .page.page-cover,
+    .page.page-1,
+    .page.page-3,
+    .page.page-5,
+    .page.page-7,
+    .page.page-9,
+    .page.page-11,
+    .page.page-13,
+    .page.page-15,
+    .page.page-17,
+    .page.page-19 {
+        padding-right: 0;
+    }
+    
+    .page.page-cover img,
+    .page.page-1 img,
+    .page.page-3 img,
+    .page.page-5 img,
+    .page.page-7 img,
+    .page.page-9 img,
+    .page.page-11 img,
+    .page.page-13 img,
+    .page.page-15 img,
+    .page.page-17 img,
+    .page.page-19 img {
+        object-position: right;
+    }
+    
+    /* Asegurar que las páginas de la derecha tengan la imagen alineada a la izquierda */
+    .page.page-2,
+    .page.page-4,
+    .page.page-6,
+    .page.page-8,
+    .page.page-10,
+    .page.page-12,
+    .page.page-14,
+    .page.page-16,
+    .page.page-18,
+    .page.page-20 {
+        padding-left: 0;
+    }
+    
+    .page.page-2 img,
+    .page.page-4 img,
+    .page.page-6 img,
+    .page.page-8 img,
+    .page.page-10 img,
+    .page.page-12 img,
+    .page.page-14 img,
+    .page.page-16 img,
+    .page.page-18 img,
+    .page.page-20 img {
+        object-position: left;
     }
     
     /* Asegurar que el contenedor del flipbook mantenga la relación de aspecto */
@@ -75,7 +132,8 @@
         height: 100%;
         backface-visibility: hidden;
         overflow: hidden;
-        box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        box-shadow: none;
+        background: transparent;
     }
     
     .flipbook-left-page {
@@ -100,9 +158,9 @@
 
 /* Estilos de Páginas */
 .page {
-    background-color: #fff;
+    background: transparent !important;
     overflow: hidden;
-    box-shadow: inset -1px 0 20px rgba(0, 0, 0, 0.05);
+    box-shadow: none !important;
 }
 
 .page-cover {
@@ -112,8 +170,7 @@
 .page-image {
     width: 100%;
     height: 100%;
-    object-fit: fill;
-    object-position: center;
+    object-fit: contain;
     display: block;
     user-select: none;
     -webkit-user-drag: none;

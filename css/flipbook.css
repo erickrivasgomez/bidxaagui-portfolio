@@ -40,46 +40,67 @@
 
 .flipbook-controls {
     position: absolute;
-    top: 0;
+    bottom: 0;
+    /* Al fondo */
     left: 0;
     width: 100%;
-    height: 100%;
+    /* Altura definida para contener los botones */
+    height: 80px;
     pointer-events: none;
     z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Contenedor Flex para agrupar botones y contador */
+.flipbook-nav-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(0, 0, 0, 0.5);
+    /* Fondo sutil para el grupo */
+    padding: 8px 20px;
+    border-radius: 30px;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    margin-bottom: 20px;
+    /* Margen inferior */
+    pointer-events: all;
+    /* Permitir click */
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .flipbook-nav {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    /* Reset de posición absoluta */
+    position: static;
+    transform: none;
+
+    background: transparent;
     color: white;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    width: 48px;
-    height: 96px;
-    font-size: 28px;
+    border: none;
+    width: 32px;
+    /* Más pequeño */
+    height: 32px;
+    /* Más pequeño */
+    font-size: 18px;
     cursor: pointer;
-    z-index: 100;
-    opacity: 0;
+    opacity: 0.7;
+    /* Transparecia por defecto */
     transition: all 0.3s ease;
-    pointer-events: all;
     display: flex;
     align-items: center;
     justify-content: center;
     user-select: none;
     padding: 0;
-}
-
-.flipbook-controls:hover .flipbook-nav,
-.reader-modal-content:hover .flipbook-nav {
-    opacity: 0.5;
+    border-radius: 50%;
+    /* Circulares */
 }
 
 .flipbook-nav:hover {
+    background: rgba(255, 255, 255, 0.1);
     opacity: 1 !important;
-    background: rgba(0, 0, 0, 0.6);
+    transform: scale(1.1);
 }
 
 .flipbook-nav:disabled {
@@ -87,36 +108,24 @@
     cursor: not-allowed;
 }
 
-.flipbook-prev {
-    left: 20px;
-    border-radius: 0 8px 8px 0;
-    border-left: none;
+/* El estilo de los iconos internos */
+.flipbook-nav i {
+    pointer-events: none;
 }
 
-.flipbook-next {
-    right: 20px;
-    border-radius: 8px 0 0 8px;
-    border-right: none;
-}
-
-/* Contador de páginas */
+/* Contador de páginas - Estilo integrado */
 .flipbook-counter {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    z-index: 100;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
-    user-select: none;
-    pointer-events: all;
+    /* Reset */
+    position: static;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    background: transparent;
+    border-radius: 0;
+    padding: 0 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    opacity: 0.9;
 }
 
 .flipbook-counter:hover {

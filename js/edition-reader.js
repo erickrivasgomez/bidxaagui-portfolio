@@ -230,10 +230,14 @@
             pageFlipInstance.loadFromHTML(pageElements);
             console.log('Páginas cargadas exitosamente');
 
-            // Event listeners
+            // Event listeners DE LA INSTANCIA
             pageFlipInstance.on('flip', (e) => {
-                console.log('Página volteada:', e.data);
-                updatePageCounter(e.data, totalPages);
+                // Actualizar contador
+                const currentPage = e.data;
+                updatePageCounter(currentPage, totalPages);
+
+                // Actualizar estado de botones (deshabilitar si es fin/inicio)
+                updateButtonsState(currentPage, totalPages);
             });
 
             pageFlipInstance.on('changeOrientation', (e) => {
@@ -245,6 +249,56 @@
 
             // Actualizar contador inicial
             updatePageCounter(0, totalPages);
+            updateButtonsState(0, totalPages);
+
+            // === GESTOS TÁCTILES MANUALES ===
+            // Implementamos esto manualmente porque la detección nativa a veces falla
+            // o entra en conflicto con el navegador
+
+            let touchStartX = 0;
+            let touchStartY = 0;
+            const touchThreshold = 50; // Mínimo desplazamiento para considerar swipe
+
+            const wrapper = container.querySelector('.stf__wrapper') || container;
+
+            wrapper.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+            }, { passive: true });
+
+            wrapper.addEventListener('touchend', (e) => {
+                const touchEndX = e.changedTouches[0].screenX;
+                const touchEndY = e.changedTouches[0].screenY;
+
+                const diffX = touchStartX - touchEndX;
+                const diffY = touchStartY - touchEndY;
+
+                // Si es un desplazamiento horizontal mayor al vertical (para evitar confundir con scroll)
+                if (Math.abs(diffX) > Math.abs(diffY)) {
+                    // SWIPE
+                    if (Math.abs(diffX) > touchThreshold) {
+                        if (diffX > 0) {
+                            // Swipe izquierda -> Siguiente
+                            pageFlipInstance.flipNext();
+                        } else {
+                            // Swipe derecha -> Anterior
+                            pageFlipInstance.flipPrev();
+                        }
+                    }
+                } else if (Math.abs(diffX) < 10 && Math.abs(diffY) < 10) {
+                    // TAP (Toque simple sin arrastre)
+                    // Definir zonas de acción
+                    const width = window.innerWidth;
+                    const touchX = e.changedTouches[0].clientX;
+
+                    // 30% izquierdo para retroceder, resto para avanzar
+                    if (touchX < (width * 0.3)) {
+                        pageFlipInstance.flipPrev();
+                    } else {
+                        pageFlipInstance.flipNext();
+                    }
+                }
+            }, { passive: true });
 
             console.log('=== StPageFlip inicializado correctamente ===');
 
@@ -265,27 +319,57 @@
         const controls = document.createElement('div');
         controls.className = 'flipbook-controls';
         controls.innerHTML = `
-            <button class="flipbook-nav flipbook-prev" aria-label="Página anterior">
-                <i class="fas fa-chevron-left"></i>
-            </button>
-            <button class="flipbook-nav flipbook-next" aria-label="Página siguiente">
-                <i class="fas fa-chevron-right"></i>
-            </button>
-            <div class="flipbook-counter">
-                <span class="current-page">1</span> / <span class="total-pages">0</span>
+            <div class="flipbook-nav-container">
+                <button class="flipbook-nav flipbook-prev" aria-label="Página anterior">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="flipbook-counter">
+                    <span class="current-page">1</span> / <span class="total-pages">0</span>
+                </div>
+                <button class="flipbook-nav flipbook-next" aria-label="Página siguiente">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
             </div>
         `;
 
         modal.querySelector('.reader-modal-content').appendChild(controls);
 
-        // Event listeners para botones
-        controls.querySelector('.flipbook-prev').addEventListener('click', () => {
+        // Event listeners para botones (asegurando la dirección correcta)
+        const prevBtn = controls.querySelector('.flipbook-prev');
+        const nextBtn = controls.querySelector('.flipbook-next');
+
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Evitar que burbujee al overlay
+            console.log('Click Anterior');
             if (pageFlipInstance) pageFlipInstance.flipPrev();
         });
 
-        controls.querySelector('.flipbook-next').addEventListener('click', () => {
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            console.log('Click Siguiente');
             if (pageFlipInstance) pageFlipInstance.flipNext();
         });
+    }
+
+    /**
+     * Actualizar estado visual de los botones
+     */
+    function updateButtonsState(pageIndex, totalPages) {
+        const prevBtn = document.querySelector('.flipbook-prev');
+        const nextBtn = document.querySelector('.flipbook-next');
+
+        if (prevBtn && nextBtn) {
+            // Deshabilitar prev si es la primera página
+            prevBtn.disabled = pageIndex === 0;
+            prevBtn.style.opacity = pageIndex === 0 ? '0.2' : '';
+
+            // Deshabilitar next si es la última
+            // Nota: en modo portrait totalPages puede variar según cómo cuenta la librería, 
+            // pero pageIndex llega hasta total-1 (o total-2 si es spread)
+            // Simplificamos chequeando si es la última o penúltima
+            nextBtn.disabled = pageIndex >= totalPages - 1;
+            nextBtn.style.opacity = pageIndex >= totalPages - 1 ? '0.2' : '';
+        }
     }
 
     /**

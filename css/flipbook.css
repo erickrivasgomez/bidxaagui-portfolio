@@ -12,6 +12,28 @@
     justify-content: center;
 }
 
+/* Estilos para pantallas anchas en modo landscape */
+@media screen and (min-width: 1024px) and (orientation: landscape) {
+    #book-container {
+        max-height: 90vh;
+        padding: 20px 0;
+    }
+    
+    #my-flipbook {
+        max-height: 100%;
+    }
+    
+    .page {
+        max-height: 90vh;
+    }
+    
+    .page-image {
+        max-height: 100%;
+        width: auto;
+        max-width: 100%;
+    }
+}
+
 /* Estilos de Páginas */
 .page {
     background-color: #fff;

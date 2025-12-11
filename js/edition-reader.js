@@ -13,7 +13,6 @@
 
     // Elementos del DOM
     const modal = document.getElementById('reader-modal');
-    const iframe = document.getElementById('reader-iframe');
     const closeBtn = document.querySelector('.reader-close');
     const overlay = document.querySelector('.reader-modal-overlay');
     const loading = document.querySelector('.reader-loading');
@@ -22,34 +21,80 @@
     let currentEditionId = null;
 
     /**
-     * Abre el modal del lector
+     * Abre el modal del lector con flipbook custom
      */
-    function openReader(editionId) {
+    async function openReader(editionId) {
         currentEditionId = editionId;
-
-        // Construir URL del admin público (sin autenticación requerida)
-        const readerUrl = `${ADMIN_URL}/public/editions/${editionId}/preview`;
 
         // Mostrar modal
         modal.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Prevenir scroll del body
+        document.body.style.overflow = 'hidden';
 
         // Mostrar loading
         loading.style.display = 'flex';
+        loading.innerHTML = `
+            <div style="text-align: center;">
+                <div class="loading-spinner"></div>
+                <p style="margin-top: 16px;">Cargando edición...</p>
+            </div>
+        `;
 
-        // Configurar iframe
-        iframe.src = readerUrl;
+        try {
+            // Obtener páginas desde la API
+            const apiUrl = window.location.hostname.includes('bidxaagui.com')
+                ? 'https://api.bidxaagui.com'
+                : 'http://localhost:8787';
 
-        // Esperar a que cargue el iframe
-        iframe.onload = function () {
-            setTimeout(() => {
-                loading.style.display = 'none';
-                iframe.classList.add('loaded');
-            }, 800); // Delay para permitir que el flipbook se inicialice
-        };
+            const response = await fetch(`${apiUrl}/api/ediciones/${editionId}/pages`);
 
-        // Manejar errores de carga
-        iframe.onerror = function () {
+            if (!response.ok) {
+                throw new Error('Error al cargar las páginas');
+            }
+
+            const data = await response.json();
+            const pages = data.data;
+
+            if (!pages || pages.length === 0) {
+                throw new Error('No se encontraron páginas');
+            }
+
+            // Preparar datos para el flipbook
+            const pagesData = pages.map((page, index) => ({
+                url: `${apiUrl}/api/images/${page.imagen_url}`,
+                number: page.numero || index + 1
+            }));
+
+            // Ocultar loading
+            loading.style.display = 'none';
+
+            // Crear contenedor del flipbook si no existe
+            let flipbookContainer = document.getElementById('flipbook-container');
+            if (!flipbookContainer) {
+                flipbookContainer = document.createElement('div');
+                flipbookContainer.id = 'flipbook-container';
+                flipbookContainer.className = 'reader-flipbook';
+                modal.querySelector('.reader-modal-overlay').appendChild(flipbookContainer);
+            }
+
+            // Limpiar contenedor
+            flipbookContainer.innerHTML = '';
+            flipbookContainer.style.display = 'block';
+
+            // Inicializar flipbook
+            const flipbook = new window.Flipbook(flipbookContainer, {
+                animationDuration: 1000,
+                onPageFlip: (pageIndex) => {
+                    console.log('Página actual:', pageIndex + 1);
+                }
+            });
+
+            flipbook.loadPages(pagesData);
+
+            // Guardar referencia
+            window.currentFlipbook = flipbook;
+
+        } catch (error) {
+            console.error('Error al cargar edición:', error);
             loading.innerHTML = `
                 <div style="text-align: center; color: #ff6b6b;">
                     <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
@@ -57,7 +102,7 @@
                     <p style="font-size: 0.9rem; opacity: 0.8;">Por favor, intenta de nuevo más tarde</p>
                 </div>
             `;
-        };
+        }
     }
 
     /**
@@ -67,10 +112,21 @@
         modal.classList.remove('active');
         document.body.style.overflow = ''; // Restaurar scroll
 
-        // Pequeño delay antes de limpiar el iframe
+        // Pequeño delay antes de limpiar
         setTimeout(() => {
-            iframe.src = '';
-            iframe.classList.remove('loaded');
+            // Destruir flipbook si existe
+            if (window.currentFlipbook) {
+                window.currentFlipbook.destroy();
+                window.currentFlipbook = null;
+            }
+
+            // Limpiar contenedor
+            const flipbookContainer = document.getElementById('flipbook-container');
+            if (flipbookContainer) {
+                flipbookContainer.style.display = 'none';
+                flipbookContainer.innerHTML = '';
+            }
+
             currentEditionId = null;
         }, 300);
     }

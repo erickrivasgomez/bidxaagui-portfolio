@@ -1,0 +1,316 @@
+/* ============================================
+   FLIPBOOK CUSTOM STYLES
+   ============================================ */
+
+.flipbook-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 2000px;
+    perspective-origin: center;
+}
+
+.flipbook-stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flipbook-pages {
+    position: relative;
+    width: 70%;
+    max-width: 800px;
+    height: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-style: preserve-3d;
+}
+
+.flipbook-page {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: white;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    overflow: hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform-origin: left center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.flipbook-page.active {
+    opacity: 1;
+    pointer-events: all;
+    z-index: 10;
+}
+
+.flipbook-page.previous,
+.flipbook-page.next {
+    opacity: 0;
+    z-index: 1;
+}
+
+.flipbook-page img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+/* ============================================
+   ANIMACIONES DE PÁGINA
+   ============================================ */
+
+/* Animación FORWARD (ir a la siguiente página) */
+.flipbook-page.flipping-forward {
+    animation: flipForward 1000ms cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+    z-index: 20;
+}
+
+@keyframes flipForward {
+    0% {
+        transform: rotateY(0deg);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+
+    25% {
+        transform: rotateY(-45deg);
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.4);
+    }
+
+    50% {
+        transform: rotateY(-90deg);
+        box-shadow: -15px 0 40px rgba(0, 0, 0, 0.5);
+    }
+
+    75% {
+        transform: rotateY(-135deg);
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.4);
+    }
+
+    100% {
+        transform: rotateY(-180deg);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+    }
+}
+
+/* Animación BACKWARD (retroceder a la página anterior) */
+.flipbook-page.flipping-backward {
+    animation: flipBackward 1000ms cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+    z-index: 20;
+}
+
+@keyframes flipBackward {
+    0% {
+        transform: rotateY(0deg);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+
+    25% {
+        transform: rotateY(-45deg);
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.4);
+    }
+
+    50% {
+        transform: rotateY(-90deg);
+        box-shadow: -15px 0 40px rgba(0, 0, 0, 0.5);
+    }
+
+    75% {
+        transform: rotateY(-135deg);
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.4);
+    }
+
+    100% {
+        transform: rotateY(-180deg);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+    }
+}
+
+/* ============================================
+   CONTROLES DE NAVEGACIÓN
+   ============================================ */
+
+.flipbook-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 48px;
+    height: 96px;
+    font-size: 28px;
+    cursor: pointer;
+    z-index: 100;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flipbook-container:hover .flipbook-nav {
+    opacity: 0.5;
+    pointer-events: all;
+}
+
+.flipbook-nav:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.flipbook-nav:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+}
+
+.flipbook-prev {
+    left: 0;
+    border-radius: 0 8px 8px 0;
+    border-left: none;
+}
+
+.flipbook-next {
+    right: 0;
+    border-radius: 8px 0 0 8px;
+    border-right: none;
+}
+
+/* Contador de páginas */
+.flipbook-counter {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    z-index: 100;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.flipbook-counter:hover {
+    opacity: 1;
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .flipbook-pages {
+        width: 90%;
+        max-width: none;
+    }
+
+    .flipbook-nav {
+        width: 40px;
+        height: 80px;
+        font-size: 24px;
+    }
+
+    .flipbook-container:hover .flipbook-nav {
+        opacity: 0.6;
+    }
+
+    .flipbook-counter {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+        bottom: 12px;
+    }
+}
+
+/* Portrait mode - Full width */
+@media (max-width: 768px) and (orientation: portrait) {
+    .flipbook-pages {
+        width: 95%;
+        height: 85%;
+    }
+}
+
+/* Landscape mode - Height constrained */
+@media (max-width: 768px) and (orientation: landscape) {
+    .flipbook-pages {
+        width: 60%;
+        height: 85%;
+    }
+}
+
+/* ============================================
+   LOADING STATE
+   ============================================ */
+
+.flipbook-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 1.2rem;
+    z-index: 1000;
+}
+
+.flipbook-loading::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 40px;
+    margin: 16px auto 0;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================
+   ACCESIBILIDAD
+   ============================================ */
+
+.flipbook-nav:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.8);
+    outline-offset: 4px;
+}
+
+/* Reducir animaciones para usuarios con preferencias */
+@media (prefers-reduced-motion: reduce) {
+
+    .flipbook-page,
+    .flipbook-nav {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .flipbook-page.flipping-forward,
+    .flipbook-page.flipping-backward {
+        animation: none;
+        opacity: 0;
+    }
+}

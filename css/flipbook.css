@@ -50,7 +50,7 @@
     .page img {
         width: 100%;
         height: 100%;
-        object-fit: contain;
+        object-fit: fill;
     }
     
     /* Asegurar que las páginas de la izquierda tengan la imagen alineada a la derecha */
@@ -151,7 +151,7 @@
     .flipbook-right-page img {
         width: 100%;
         height: 100%;
-        object-fit: contain;
+        object-fit: fill;
         object-position: center;
     }
 }
@@ -170,7 +170,7 @@
 .page-image {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: fill;
     display: block;
     user-select: none;
     -webkit-user-drag: none;

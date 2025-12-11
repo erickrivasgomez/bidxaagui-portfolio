@@ -1,423 +1,207 @@
 /**
- * Edition Reader - Hybrid Engine v2 (Custom 3D + Native Slider)
- * Desktop/Landscape: Custom 3D CSS Engine (No external lib)
- * Mobile Portrait: Native Slider (Performance)
+ * Edition Reader - Powered by PageFlip (nodep-st/page-flip)
+ * Implements a responsive modal flipbook.
  */
 
 (function () {
     'use strict';
 
-    // Configuración
+    // ==========================================
+    // CONFIGURACIÓN
+    // ==========================================
     const API_URL = window.location.hostname.includes('bidxaagui.com')
         ? 'https://api.bidxaagui.com'
         : 'http://localhost:8787';
 
-    // Elementos DOM Globales
+    // Referencias DOM
     const modal = document.getElementById('reader-modal');
     const closeBtn = document.querySelector('.reader-close');
     const overlay = document.querySelector('.reader-modal-overlay');
     const loading = document.querySelector('.reader-loading');
+    const contentContainer = modal.querySelector('.reader-modal-content');
 
-    // Estado Global
-    let currentState = {
-        mode: null,
-        pages: [], // Array de objetos {imagen_url}
-        currentPage: 0,
-        totalPages: 0,
-        engine: null, // Instancia de CustomFlipbook o referencia al slider
-    };
+    let pageFlip = null;
+    let flipbookEl = null;
 
     /**
      * Entry Point: Abrir el lector
+     * @param {string} editionId 
      */
     async function openReader(editionId) {
-        currentState = { mode: null, pages: [], currentPage: 0, totalPages: 0, engine: null };
+        // Reset state
+        if (pageFlip) {
+            pageFlip.destroy();
+            pageFlip = null;
+        }
 
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
         loading.style.display = 'flex';
+        loading.innerHTML = '<div class="loading-spinner"></div><p>Cargando edición...</p>';
 
-        const container = getContainer();
-        container.innerHTML = '';
+        // Limpiar contenedor anterior (manteniendo controles si los hubiera, pero aquí limpiamos todo el area de libro)
+        // Buscamos si ya existe el elemento, si no lo creamos limpio
+        let bookContainer = document.getElementById('book-container');
+        if (bookContainer) bookContainer.remove();
+
+        bookContainer = document.createElement('div');
+        bookContainer.id = 'book-container';
+        // Estilos base para el contenedor del libro dentro del modal
+        bookContainer.style.position = 'relative';
+        bookContainer.style.width = '100%';
+        bookContainer.style.height = '100%';
+        bookContainer.style.display = 'flex';
+        bookContainer.style.alignItems = 'center';
+        bookContainer.style.justifyContent = 'center';
+
+        contentContainer.appendChild(bookContainer);
 
         try {
+            // 1. Obtener datos de la API
             const response = await fetch(`${API_URL}/api/ediciones/${editionId}/pages`);
-            if (!response.ok) throw new Error('Error de red');
-            const data = await response.json();
+            if (!response.ok) throw new Error('Error al cargar la edición');
 
-            currentState.pages = data.data || [];
-            currentState.totalPages = currentState.pages.length;
+            const json = await response.json();
+            const pages = json.data || [];
 
-            if (currentState.pages.length === 0) throw new Error('Edición sin páginas');
+            if (pages.length === 0) throw new Error('Esta edición no tiene páginas disponibles aún.');
 
-            await preloadImages(currentState.pages.slice(0, 4)); // Cargar primeras 4
+            // 2. Crear elementos HTML para las páginas
+            // PageFlip necesita elementos en el DOM antes de inicializar
+            // Creamos un div interno que será el "libro"
+            const bookEl = document.createElement('div');
+            bookEl.id = 'my-flipbook';
+            bookEl.style.display = 'none'; // Oculto hasta cargar imágenes clave
+            bookContainer.appendChild(bookEl);
+
+            // Generar HTML de las páginas
+            // IMPORTANTE: PageFlip maneja Cover (portada) como la primera página si showCover: true
+            pages.forEach((page, index) => {
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'page';
+                if (index === 0) pageDiv.className += ' page-cover'; // Portada
+
+                // Usamos data-src para evitar carga masiva inmediata (opcional), 
+                // pero PageFlip maneja bien la carga si son imágenes simples.
+                // Para simplificar y asegurar calidad:
+                const img = document.createElement('img');
+                img.src = `${API_URL}/api/images/${page.imagen_url}`;
+                img.loading = 'lazy'; // Nativo
+                img.className = 'page-image';
+                img.alt = `Página ${index + 1}`;
+
+                // Styling básico para la imagen dentro de la página
+                // height/width 100% lo manejará el CSS
+
+                pageDiv.appendChild(img);
+                bookEl.appendChild(pageDiv);
+            });
+
+            // 3. Esperar a que la primera imagen (portada) cargue para dimensionar
+            // O simplemente dar un pequeño timeout. Mejor pre-cargar la 1.
+            const firstImg = bookEl.querySelector('img');
+            if (firstImg) {
+                await new Promise(resolve => {
+                    if (firstImg.complete) resolve();
+                    else firstImg.onload = () => resolve();
+                });
+            }
 
             loading.style.display = 'none';
+            bookEl.style.display = 'block';
 
-            initEngine();
-
-            window.addEventListener('resize', handleResize);
+            // 4. Inicializar PageFlip
+            initPageFlip(bookEl, pages.length);
 
         } catch (error) {
             console.error(error);
-            loading.innerHTML = `<p>Error. <button onclick="location.reload()">Reintentar</button></p>`;
+            loading.style.display = 'flex';
+            loading.innerHTML = `<p style="color:#ff6b6b">Error: ${error.message} <br><br> <button class="btn btn-small" onclick="location.reload()">Reintentar</button></p>`;
         }
     }
 
-    /**
-     * Motor Select
-     */
-    function initEngine() {
-        const isMobilePortrait = window.matchMedia("(max-width: 768px) and (orientation: portrait)").matches;
-        // const targetMode = isMobilePortrait ? 'mobile' : 'desktop';
-        // FORZAMOS DESKTOP ENGINE (CustomFlipbook) CON CONFIGURACIÓN SINGLE PARA MÓVIL
-        const targetMode = 'custom_3d';
+    function initPageFlip(element, totalPages) {
+        // Detectar si es móvil para ajustar dimensiones iniciales
+        const isMobile = window.innerWidth < 768;
 
-        if (currentState.mode === targetMode && currentState.engine) {
-            // Si solo es resize pero mismo motor, actualizar layout
-            currentState.engine.resize(isMobilePortrait);
-            return;
-        }
+        // Configuración de dimensiones base (Ratio A4 aprox o cuadrado)
+        // Esto define el aspect ratio. Si las imágenes son A4 (210x297), usar esa proporción.
+        // Asumo vertical estándar.
+        const width = 600;
+        const height = 800; // 3:4 aspect ratio approx
 
-        destroyEngine();
-        currentState.mode = targetMode;
+        try {
+            // @ts-ignore
+            pageFlip = new St.PageFlip(element, {
+                width: width,
+                height: height,
+                // Size: stretch permite que se ajuste al contenedor padre (modal)
+                size: 'stretch',
+                // Min/Max constraints
+                minWidth: 300,
+                maxWidth: 1000,
+                minHeight: 400,
+                maxHeight: 1200,
 
-        const container = getContainer();
-
-        console.log('🚀 Iniciando Custom 3D Engine (Adaptativo)');
-        const imageUrls = currentState.pages.map(p => `${API_URL}/api/images/${p.imagen_url}`);
-
-        // Instanciar con modo single si es mobile portrait
-        currentState.engine = new CustomFlipbook(container, imageUrls, currentState.currentPage, isMobilePortrait);
-
-        createControls();
-        updateUI(currentState.currentPage);
-    }
-
-    /**
-     * (Eliminada función initMobileSlider antigua para usar siempre 3D)
-     */
-
-    /**
-     * Class CustomFlipbook (Universal 3D Engine)
-     */
-    class CustomFlipbook {
-        constructor(container, images, startIndex = 0, isSingleMode = false) {
-            this.container = container;
-            this.images = images;
-            this.isSingleMode = isSingleMode;
-
-            // En Single Mode: 1 imagen = 1 hoja (Leaf). Total Leafs = N imágenes.
-            // En Spread Mode: 2 imágenes = 1 hoja (Front/Back). Total Leafs = N/2.
-            this.totalLeafs = this.isSingleMode ? images.length : Math.ceil(images.length / 2);
-
-            // Current Leaf Index (0..N)
-            this.currentLeaf = 0;
-            if (startIndex > 0) {
-                this.currentLeaf = this.isSingleMode ? startIndex : Math.floor(startIndex / 2);
-            }
-
-            this.leafs = [];
-            this.init();
-        }
-
-        init() {
-            this.stage = document.createElement('div');
-            this.stage.className = `book-stage ${this.isSingleMode ? 'single-mode' : 'spread-mode'}`;
-
-            // Construir hojas
-            for (let i = 0; i < this.totalLeafs; i++) {
-                const leaf = document.createElement('div');
-                // Asignar clase Hard/Soft
-                const isCover = (i === 0 || i === this.totalLeafs - 1);
-                leaf.className = `book-leaf ${isCover ? 'hard-cover' : 'soft-page'}`;
-
-                leaf.style.zIndex = this.totalLeafs - i + 10;
-
-                // Ocultar hojas lejanas para ahorrar memoria GPU (CRÍTICO PARA IOS)
-                // Solo mostramos las primeras 2 al inicio
-                if (i > 1 && i !== this.currentLeaf) {
-                    leaf.style.display = 'none';
-                }
-
-                const front = document.createElement('div');
-                front.className = 'book-page front';
-                const back = document.createElement('div');
-                back.className = 'book-page back';
-
-                // MODO SINGLE vs SPREAD (URLs mapping)
-                // Guardamos la URL en dataset para carga lazy
-                if (this.isSingleMode) {
-                    front.dataset.src = this.images[i];
-                    back.style.backgroundColor = '#ddd';
-                } else {
-                    front.dataset.src = this.images[i * 2];
-                    back.dataset.src = this.images[i * 2 + 1];
-                }
-
-                leaf.appendChild(front);
-                leaf.appendChild(back);
-                this.stage.appendChild(leaf);
-                this.leafs.push(leaf);
-
-                if (i < this.currentLeaf) {
-                    leaf.classList.add('flipped');
-                    leaf.style.zIndex = 100 + i;
-                }
-            }
-
-            this.container.appendChild(this.stage);
-            this.resize(this.isSingleMode);
-
-            // Actualizar visibilidad y cargar imágenes iniciales
-            this.updateVisibility();
-
-            setTimeout(() => this.stage.classList.add('loaded'), 50);
-        }
-
-        resize(isSingle) {
-            this.isSingleMode = isSingle;
-            if (this.stage) this.stage.className = `book-stage ${this.isSingleMode ? 'single-mode' : 'spread-mode'}`;
-            // Recalcular dimensiones CSS si fuera necesario
-            // CSS classes .single-mode vs .spread-mode manejan el layout (ver CSS)
-        }
-
-        // Carga diferida de imágenes
-        updateVisibility() {
-            // Rango de visibilidad: Current - 2 hasta Current + 2
-            // Esto asegura que la animación tenga recursos listos pero no sature memoria
-            const range = 2;
-            const min = Math.max(0, this.currentLeaf - range);
-            const max = Math.min(this.totalLeafs - 1, this.currentLeaf + range);
-
-            this.leafs.forEach((leaf, i) => {
-                // VISIBILIDAD DOM (GPU Memory)
-                if (i >= min && i <= max) {
-                    leaf.style.display = 'block';
-                    // Cargar imágenes si no están cargadas
-                    this.loadLeafImages(leaf);
-                } else {
-                    leaf.style.display = 'none';
-                    // Opcional: Podríamos descargar imágenes aquí si la memoria es muy crítica
-                }
+                // Configuración de vista
+                showCover: true, // La primera página es portada (Single view en desktop init, después spread)
+                drawShadow: true,
+                maxShadowOpacity: 0.2, // Sutil
+                showPageCorners: true, // Muestra dobles de página al hover
+                usePortrait: true, // Permite modo portrait (una página) si el espacio es reducido
+                startPage: 0,
+                mobileScrollSupport: true, // Gestos en móvil
+                clickEventForward: true,
+                useMouseEvents: true
             });
+
+            // Cargar las páginas desde el DOM que acabamos de crear (element children)
+            const pagesNodes = element.querySelectorAll('.page');
+            pageFlip.loadFromHTML(pagesNodes);
+
+            flipbookEl = element;
+
+        } catch (e) {
+            console.error('Error inicializando PageFlip:', e);
         }
-
-        loadLeafImages(leaf) {
-            const pages = leaf.querySelectorAll('.book-page');
-            pages.forEach(page => {
-                if (page.dataset.src && !page.querySelector('img')) {
-                    const img = document.createElement('img');
-                    img.src = page.dataset.src;
-                    page.removeAttribute('data-src'); // Limpiar
-                    page.appendChild(img);
-                }
-            });
-        }
-
-        mkImg(container, src) {
-            if (!src) return;
-            const img = document.createElement('img');
-            img.src = src;
-            container.appendChild(img);
-        }
-
-        flipNext() {
-            if (this.currentLeaf >= this.totalLeafs) return;
-            this.flipPage('next');
-        }
-
-        flipPrev() {
-            if (this.currentLeaf <= 0) return;
-            this.flipPage('prev');
-        }
-
-        flipPage(dir) {
-            if (dir === 'next') {
-                const leaf = this.leafs[this.currentLeaf];
-                if (!leaf) return;
-
-                // Asegurar que la hoja siguiente sea visible antes de animar
-                if (this.currentLeaf + 1 < this.totalLeafs) {
-                    this.leafs[this.currentLeaf + 1].style.display = 'block';
-                    this.loadLeafImages(this.leafs[this.currentLeaf + 1]);
-                }
-
-                // leaf.style.transition = ...  <-- ELIMINADO para usar CSS classes
-                leaf.style.zIndex = 1000;
-                leaf.classList.add('flipped');
-
-                const myIndex = this.currentLeaf;
-
-                // Tiempo de espera dinámico según tipo de hoja
-                const isHard = leaf.classList.contains('hard-cover');
-                const timeout = isHard ? 600 : 350; // Ajustado a la mitad de la transición CSS (1.2s vs 0.7s)
-
-                setTimeout(() => {
-                    leaf.style.zIndex = 100 + myIndex;
-                    // Limpieza post-animación
-                    this.updateVisibility();
-                }, timeout);
-
-                this.currentLeaf++;
-
-            } else {
-                this.currentLeaf--;
-                const leaf = this.leafs[this.currentLeaf];
-                if (!leaf) return;
-
-                // Asegurar visible
-                leaf.style.display = 'block';
-                this.loadLeafImages(leaf);
-
-                // leaf.style.transition = ... <-- ELIMINADO
-                leaf.style.zIndex = 1000;
-                leaf.classList.remove('flipped');
-
-                const myIndex = this.currentLeaf;
-                const isHard = leaf.classList.contains('hard-cover');
-                const timeout = isHard ? 600 : 350;
-
-                setTimeout(() => {
-                    leaf.style.zIndex = this.totalLeafs - myIndex + 10;
-                    this.updateVisibility();
-                }, timeout);
-            }
-
-            // Callback UI
-            const realPage = this.isSingleMode ? this.currentLeaf : this.currentLeaf * 2;
-            if (window.updateExternalUI) window.updateExternalUI(realPage);
-        }
-
-        destroy() {
-            this.container.innerHTML = '';
-        }
-    }
-
-    /**
-     * UI & Events
-     */
-    function createControls() {
-        let controlsDiv = modal.querySelector('.flipbook-controls');
-        if (controlsDiv) controlsDiv.remove();
-
-        controlsDiv = document.createElement('div');
-        controlsDiv.className = 'flipbook-controls';
-        controlsDiv.innerHTML = `
-            <div class="flipbook-nav-container">
-                <button class="flipbook-nav prev" aria-label="Anterior">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <div class="flipbook-counter">
-                    <span id="page-curr">1</span> / <span id="page-total">${currentState.totalPages}</span>
-                </div>
-                <button class="flipbook-nav next" aria-label="Siguiente">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
-        `;
-
-        const prevBtn = controlsDiv.querySelector('.prev');
-        const nextBtn = controlsDiv.querySelector('.next');
-
-        prevBtn.onclick = (e) => { e.stopPropagation(); navigate('prev'); };
-        nextBtn.onclick = (e) => { e.stopPropagation(); navigate('next'); };
-
-        modal.querySelector('.reader-modal-content').appendChild(controlsDiv);
-    }
-
-    function navigate(dir) {
-        if (currentState.mode === 'mobile') {
-            const slider = currentState.engine;
-            const targetPage = dir === 'next' ? currentState.currentPage + 1 : currentState.currentPage - 1;
-            if (targetPage >= 0 && targetPage < currentState.totalPages) {
-                slider.scrollTo({ left: targetPage * slider.clientWidth, behavior: 'smooth' });
-            }
-        } else {
-            // Desktop Custom
-            dir === 'next' ? currentState.engine.flipNext() : currentState.engine.flipPrev();
-        }
-    }
-
-    function updateUI(idx) {
-        const currEl = document.getElementById('page-curr');
-        if (currEl) currEl.innerText = idx + 1;
-
-        // Expose callback for class
-        window.updateExternalUI = (newIdx) => {
-            currentState.currentPage = newIdx;
-            if (currEl) currEl.innerText = newIdx + 1;
-            updateButtons(newIdx);
-        };
-        updateButtons(idx);
-    }
-
-    function updateButtons(idx) {
-        const prev = modal.querySelector('.flipbook-nav.prev');
-        const next = modal.querySelector('.flipbook-nav.next');
-        if (prev) prev.disabled = idx === 0;
-        if (next) next.disabled = idx >= currentState.totalPages - 1;
-    }
-
-    // Utilidades
-    function getContainer() {
-        let el = document.getElementById('flipbook-container');
-        if (!el) {
-            el = document.createElement('div');
-            el.id = 'flipbook-container';
-            modal.querySelector('.reader-modal-content').appendChild(el);
-        }
-        return el;
-    }
-
-    function destroyEngine() {
-        if (currentState.engine && currentState.engine.destroy) currentState.engine.destroy();
-        const c = document.getElementById('flipbook-container');
-        if (c) c.innerHTML = '';
-        currentState.engine = null;
     }
 
     function closeReader() {
         modal.classList.remove('active');
-        document.body.style.overflow = '';
-        window.removeEventListener('resize', handleResize);
-        setTimeout(destroyEngine, 200);
+        document.body.style.overflow = ''; // Restaurar scroll
+
+        // Timeout para permitir animación de cierre
+        setTimeout(() => {
+            if (pageFlip) {
+                pageFlip.destroy();
+                pageFlip = null;
+            }
+            const c = document.getElementById('book-container');
+            if (c) c.innerHTML = '';
+        }, 300);
     }
 
-    function debounce(func, wait) {
-        let timeout;
-        return function (...args) {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(this, args), wait);
-        };
-    }
-
-    let resizeTimer;
-    function handleResize() {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(initEngine, 200);
-    }
-
-    function preloadImages(pages) {
-        return Promise.all(pages.map(p => {
-            const i = new Image();
-            i.src = `${API_URL}/api/images/${p.imagen_url}`;
-            return new Promise(r => { i.onload = r; i.onerror = r; });
-        }));
-    }
-
-    // Init Events
+    // Event Listeners
     document.querySelectorAll('.edition-card').forEach(card => {
-        card.addEventListener('click', () => openReader(card.dataset.editionId));
+        card.addEventListener('click', (e) => {
+            // Check if disabled
+            if (card.classList.contains('edition-card-disabled')) return;
+            // Get ID
+            const id = card.getAttribute('data-edition-id');
+            if (id) openReader(id);
+        });
     });
 
-    closeBtn.addEventListener('click', closeReader);
-    overlay.addEventListener('click', closeReader);
+    if (closeBtn) closeBtn.addEventListener('click', closeReader);
+    if (overlay) overlay.addEventListener('click', closeReader);
+
+    // Teclado
     document.addEventListener('keydown', (e) => {
-        if (!modal.classList.contains('active')) return;
+        if (!modal.classList.contains('active') || !pageFlip) return;
+
         if (e.key === 'Escape') closeReader();
-        if (e.key === 'ArrowRight') navigate('next');
-        if (e.key === 'ArrowLeft') navigate('prev');
+        if (e.key === 'ArrowRight') pageFlip.flipNext();
+        if (e.key === 'ArrowLeft') pageFlip.flipPrev();
     });
 
 })();

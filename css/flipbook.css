@@ -1,246 +1,182 @@
 /* ============================================
-   FLIPBOOK HYBRID STYLES v2 (Custom Engine)
+   FLIPBOOK LIGHTBOX STYLES (PageFlip)
    ============================================ */
 
-#flipbook-container {
+/* --- Book Container & Pages --- */
+
+/* El contenedor creado dinámicamente */
+#book-container {
     width: 100%;
     height: 100%;
-    position: relative;
+    overflow: hidden;
+    /* Importante para que no se salga */
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
-    /* Importante para el 3D */
 }
 
-/* --- MODO DESKTOP & MOBILE 3D (Custom 3D Engine) --- */
-
-.book-stage {
-    position: relative;
-    /* Las dimensiones base se calculan en JS, pero aquí definimos comportamiento */
-    perspective: 2000px;
-    transform-style: preserve-3d;
-    opacity: 0;
-    transition: opacity 0.5s ease;
+/* El elemento DIV que PageFlip usa */
+#my-flipbook {
+    /* PageFlip setea dimensiones inline, pero esto ayuda */
 }
 
-.book-stage.spread-mode {
-    /* En modo spread, el libro ocupa ancho doble */
-    width: 60vh;
-    /* Base */
-}
-
-.book-stage.single-mode {
-    /* En modo single, ancho completo del contenedor (móvil) */
-    width: 90vw !important;
-    height: 70vh !important;
-    /* Ajuste visual mejor para retrato */
-}
-
-.book-stage.loaded {
-    opacity: 1;
-}
-
-/* Configuraciones de Hojas */
-.book-leaf {
-    position: absolute;
-    top: 0;
-    height: 100%;
-    transform-origin: left center;
-    transform-style: preserve-3d;
-}
-
-/* --- ANIMACIONES DIFERENCIADAS --- */
-
-/* HARD COVER (Portada/Contraportada): Movimiento rígido, pesado y uniforme */
-.book-leaf.hard-cover {
-    transition: transform 1.2s ease-in-out;
-}
-
-/* SOFT PAGE (Interiores): Movimiento ágil, ligeramente elástico */
-.book-leaf.soft-page {
-    transition: transform 0.7s cubic-bezier(0.645, 0.045, 0.355, 1);
-}
-
-
-/* Modos de Hoja */
-.spread-mode .book-leaf {
-    left: 50%;
-    width: 50%;
-}
-
-.single-mode .book-leaf {
-    left: 0;
-    width: 100%;
-}
-
-.book-leaf.flipped {
-    transform: rotateY(-180deg);
-}
-
-/* Caras de la hoja */
-.book-page {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
+/* Estilos de Páginas */
+.page {
     background-color: #fff;
-    /* Fondo blanco para evitar transparencias */
     overflow: hidden;
+    box-shadow: inset -1px 0 20px rgba(0, 0, 0, 0.05);
+    /* Sutil sombra interna */
+    /* Asegurar que la página no tenga bordes raros */
 }
 
-.book-page.front {
-    /* La cara frontal */
-    z-index: 2;
+.page-cover {
+    /* Estilos específicos para portada si se quisiera */
+    z-index: 100;
 }
 
-.book-page.back {
-    /* La cara trasera */
-    transform: rotateY(180deg);
-    z-index: 1;
-    background-color: #f8f8f8;
-    /* Ligeramente diferente para realismo */
-}
-
-/* Imágenes - CORRECCIÓN DE BORDES RECORTADOS */
-.book-page img {
+.page-image {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    /* CRÍTICO: Muestra toda la imagen sin recortar nada */
+    /* Ajusta la imagen sin recortar */
     object-position: center;
     display: block;
-    /* Sombra interna sutil solo para dar profundidad */
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.02);
-}
-
-/* Sombras Dinámicas (Solo para Soft Pages -> Efecto Curvatura) */
-.book-page::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    transition: opacity 0.5s ease;
-    pointer-events: none;
-    opacity: 0;
-}
-
-/* Sombra en el lomo (Solo Soft Pages) */
-.book-leaf.soft-page:not(.flipped) .front::after {
-    background: linear-gradient(to right, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0) 15%);
-    opacity: 1;
-}
-
-.book-leaf.soft-page.flipped .back::after {
-    background: linear-gradient(to left, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0) 15%);
-    opacity: 1;
-}
-
-/* Ajuste de Z-Index para páginas estáticas (JS manejará esto dinámicamente, pero base aquí) */
-
-/* --- MODO MOBILE (Native Slider) - MANTENIDO IGUAL --- */
-.mobile-slider-container {
-    width: 100%;
-    height: 100%;
-    overflow-x: scroll;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    display: flex;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    scroll-behavior: smooth;
-    align-items: center;
-}
-
-.mobile-slider-container::-webkit-scrollbar {
-    display: none;
-}
-
-.mobile-slider-page {
-    flex: 0 0 100%;
-    width: 100%;
-    height: 90%;
-    scroll-snap-align: center;
-    scroll-snap-stop: always;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.mobile-slider-page img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     user-select: none;
     -webkit-user-drag: none;
 }
 
-/* --- CONTROLES DE NAVEGACIÓN --- */
-.flipbook-controls {
-    position: absolute;
-    bottom: 20px;
+/* --- Modal Base Overrides --- */
+/* Aseguramos que el modal tenga el z-index correcto y layout */
+
+.reader-modal {
+    position: fixed;
+    top: 0;
     left: 0;
     width: 100%;
-    height: 60px;
-    pointer-events: none;
-    z-index: 100;
+    height: 100%;
+    z-index: 9999;
+
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.flipbook-nav-container {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    background: rgba(20, 20, 20, 0.6);
-    padding: 8px 24px;
-    border-radius: 50px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    pointer-events: all;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    transition: opacity 0.3s ease;
-}
-
-.flipbook-nav {
-    background: transparent;
-    color: white;
-    border: none;
-    width: 36px;
-    height: 36px;
-    font-size: 16px;
-    cursor: pointer;
-    opacity: 0.8;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-}
-
-.flipbook-nav:hover {
-    background: rgba(255, 255, 255, 0.2);
+.reader-modal.active {
+    visibility: visible;
     opacity: 1;
-    transform: scale(1.1);
 }
 
-.flipbook-nav:disabled {
-    opacity: 0.3;
-    pointer-events: none;
+.reader-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
-.flipbook-counter {
+.reader-modal-content {
+    position: relative;
+    z-index: 10001;
+    width: 95vw;
+    height: 90vh;
+    /* Ocupa casi toda la pantalla */
+    max-width: 1600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- Botón Cerrar (Solo X) --- */
+.reader-close {
+    position: absolute;
+    top: -10px;
+    /* Un poco arriba del contenedor para flotar */
+    right: 0;
+    z-index: 10002;
+
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 10px;
+    transition: color 0.2s ease, transform 0.2s ease;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.reader-close:hover {
+    color: #fff;
+    transform: scale(1.1) rotate(90deg);
+}
+
+/* En móvil, el botón puede necesitar ajuste */
+@media (max-width: 768px) {
+    .reader-modal-content {
+        width: 100vw;
+        height: 100vh;
+        /* Fullscreen total en móvil */
+    }
+
+    .reader-close {
+        top: 10px;
+        right: 15px;
+        /* Más margen */
+        background: rgba(0, 0, 0, 0.3);
+        /* Fondo circular para contraste */
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+    }
+}
+
+/* --- Loading --- */
+.reader-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     color: white;
-    font-size: 14px;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    min-width: 60px;
-    text-align: center;
+    font-family: var(--font-body, sans-serif);
+    z-index: 10005;
 }
+
+.loading-spinner {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 3px solid #fff;
+    width: 40px;
+    height: 40px;
+    -webkit-animation: spin 1s linear infinite;
+    /* Safari */
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* --- Shadows Softening --- */
+/* PageFlip agrega sombras canvas, a veces queremos ajustarlas, pero API lo hace. */

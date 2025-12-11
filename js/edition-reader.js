@@ -97,13 +97,32 @@
                 bookEl.appendChild(pageDiv);
             });
 
-            // 3. Esperar a que la primera imagen (portada) cargue para dimensionar
-            // O simplemente dar un pequeño timeout. Mejor pre-cargar la 1.
+            // 3. Esperar a que la primera imagen (portada) cargue
             const firstImg = bookEl.querySelector('img');
             if (firstImg) {
+                console.log('Esperando carga de portada:', firstImg.src);
                 await new Promise(resolve => {
-                    if (firstImg.complete) resolve();
-                    else firstImg.onload = () => resolve();
+                    if (firstImg.complete) {
+                        resolve();
+                        return;
+                    }
+
+                    const finish = () => {
+                        resolve();
+                        clearTimeout(timeout);
+                    };
+
+                    firstImg.onload = finish;
+                    firstImg.onerror = () => {
+                        console.error('Error cargando imagen portada, continuando de todos modos');
+                        finish();
+                    };
+
+                    // Timeout de seguridad de 3 segundos
+                    const timeout = setTimeout(() => {
+                        console.warn('Timeout cargando portada');
+                        finish();
+                    }, 3000);
                 });
             }
 

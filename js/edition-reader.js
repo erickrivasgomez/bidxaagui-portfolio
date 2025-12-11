@@ -186,7 +186,8 @@
 
         console.log('Dimensiones calculadas - width:', width, 'height:', height);
 
-        // Configuración de StPageFlip
+        // Configuración de StPageFlip - OPTIMIZADA PARA MÓVIL
+        // Desactivamos los eventos nativos de la librería para tener control total manual
         const config = {
             width: width,
             height: height,
@@ -197,15 +198,15 @@
             maxHeight: 1600,
             maxShadowOpacity: 0.5,
             showCover: true,
-            mobileScrollSupport: true,
+            mobileScrollSupport: false, // IMPORTANTE: Desactivar scroll nativo del flipbook
             usePortrait: isMobile && isPortrait,
             startPage: 0,
             drawShadow: true,
-            flippingTime: 1000,
-            useMouseEvents: true,
-            swipeDistance: 30,
-            clickEventForward: true,
-            disableFlipByClick: false
+            flippingTime: 800, // Ligeramente más rápido
+            useMouseEvents: false, // IMPORTANTE: Desactivar eventos nativos para evitar conflictos
+            swipeDistance: 10000, // Valor imposible para desactivar swipe nativo de la librería
+            clickEventForward: false, // No reenviar clicks
+            disableFlipByClick: true // Desactivar flip por click nativo
         };
 
         console.log('Configuración:', config);
@@ -213,52 +214,35 @@
         try {
             // Obtener todos los elementos de página
             const pageElements = container.querySelectorAll('.stf__item, div[data-density]');
-            console.log('Elementos de página encontrados:', pageElements.length);
 
-            if (pageElements.length === 0) {
-                console.error('No se encontraron elementos de página!');
-                return;
-            }
+            if (pageElements.length === 0) return;
 
-            // Crear instancia de PageFlip
-            console.log('Creando instancia de St.PageFlip...');
+            // Crear instancia
             pageFlipInstance = new St.PageFlip(container, config);
-            console.log('Instancia creada:', pageFlipInstance);
-
-            // Cargar páginas
-            console.log('Cargando páginas desde HTML...');
             pageFlipInstance.loadFromHTML(pageElements);
-            console.log('Páginas cargadas exitosamente');
 
             // Event listeners DE LA INSTANCIA
             pageFlipInstance.on('flip', (e) => {
-                // Actualizar contador
-                const currentPage = e.data;
-                updatePageCounter(currentPage, totalPages);
-
-                // Actualizar estado de botones (deshabilitar si es fin/inicio)
-                updateButtonsState(currentPage, totalPages);
+                updatePageCounter(e.data, totalPages);
+                updateButtonsState(e.data, totalPages);
             });
 
-            pageFlipInstance.on('changeOrientation', (e) => {
-                console.log('Orientación cambiada:', e.data);
-            });
-
-            // Crear controles de navegación
+            // Crear controles visuales
             createNavigationControls();
 
-            // Actualizar contador inicial
+            // Actualizar estado inicial
             updatePageCounter(0, totalPages);
             updateButtonsState(0, totalPages);
 
-            // === GESTOS TÁCTILES MANUALES ===
-            // Implementamos esto manualmente porque la detección nativa a veces falla
-            // o entra en conflicto con el navegador
+            // === CONTROLADOR TÁCTIL MANUAL (TOUCH CONTROLLER) ===
+            // Este bloque reemplaza toda la interacción nativa para garantizar precisión
 
             let touchStartX = 0;
             let touchStartY = 0;
-            const touchThreshold = 50; // Mínimo desplazamiento para considerar swipe
+            let isDragging = false;
+            const touchThreshold = 30; // Sensibilidad del swipe (menor es más sensible)
 
+            // Seleccionamos el wrapper interno que crea la librería
             const wrapper = container.querySelector('.stf__wrapper') || container;
 
             wrapper.addEventListener('touchstart', (e) => {

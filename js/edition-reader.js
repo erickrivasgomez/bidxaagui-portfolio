@@ -71,15 +71,20 @@
                 modal.querySelector('.reader-modal-content').appendChild(flipbookContainer);
             }
 
+            console.log('Flipbook container:', flipbookContainer);
+
             // Limpiar contenedor
             flipbookContainer.innerHTML = '';
-            flipbookContainer.style.display = 'block';
+            flipbookContainer.style.display = 'flex';
+            flipbookContainer.style.width = '100%';
+            flipbookContainer.style.height = '100%';
 
             // Crear elementos de página
+            console.log('Creando', pages.length, 'páginas');
             pages.forEach((page, index) => {
                 const pageEl = document.createElement('div');
                 pageEl.className = 'stf__item';
-                pageEl.dataset.density = index === 0 ? 'hard' : 'soft'; // Primera página "dura"
+                pageEl.dataset.density = index === 0 ? 'hard' : 'soft';
 
                 const img = document.createElement('img');
                 img.src = `${apiUrl}/api/images/${page.imagen_url}`;
@@ -88,12 +93,16 @@
                 img.style.height = '100%';
                 img.style.objectFit = 'cover';
 
+                console.log('Página', index + 1, 'URL:', img.src);
+
                 pageEl.appendChild(img);
                 flipbookContainer.appendChild(pageEl);
             });
 
             // Esperar a que las imágenes carguen antes de inicializar
+            console.log('Esperando carga de imágenes...');
             await waitForImagesToLoad(flipbookContainer);
+            console.log('Imágenes cargadas, inicializando StPageFlip...');
 
             // Inicializar StPageFlip
             initializePageFlip(flipbookContainer, pages.length);
@@ -132,9 +141,22 @@
      * Inicializar StPageFlip con configuración adaptativa
      */
     function initializePageFlip(container, totalPages) {
+        console.log('=== Inicializando StPageFlip ===');
+        console.log('Container:', container);
+        console.log('Total páginas:', totalPages);
+        console.log('Librería disponible:', typeof St !== 'undefined');
+
+        if (typeof St === 'undefined' || typeof St.PageFlip === 'undefined') {
+            console.error('StPageFlip no está cargado!');
+            alert('Error: La librería StPageFlip no se cargó correctamente.');
+            return;
+        }
+
         // Detectar modo
         const isMobile = window.innerWidth < 768;
         const isPortrait = window.innerHeight > window.innerWidth;
+
+        console.log('isMobile:', isMobile, 'isPortrait:', isPortrait);
 
         // Calcular dimensiones
         const containerW = window.innerWidth;
@@ -143,32 +165,32 @@
         let width, height;
 
         if (isMobile && isPortrait) {
-            // Mobile Portrait: 1 página, usar ancho como constraint
+            // Mobile Portrait: 1 página
             width = Math.floor(containerW * 0.9);
-            height = Math.floor(width / 0.7); // Ratio 7:10
+            height = Math.floor(width / 0.7);
 
-            // Ajustar si la altura es muy grande
             if (height > containerH * 0.85) {
                 height = Math.floor(containerH * 0.85);
                 width = Math.floor(height * 0.7);
             }
         } else {
-            // Desktop y Mobile Landscape: 2 páginas, usar altura como constraint
+            // Desktop y Mobile Landscape: 2 páginas
             height = Math.floor(containerH * 0.9);
-            width = Math.floor(height * 0.7); // Cada página con ratio 7:10
+            width = Math.floor(height * 0.7);
 
-            // Ajustar si 2 páginas no caben
             if ((width * 2) > containerW * 0.9) {
                 width = Math.floor((containerW * 0.9) / 2);
                 height = Math.floor(width / 0.7);
             }
         }
 
+        console.log('Dimensiones calculadas - width:', width, 'height:', height);
+
         // Configuración de StPageFlip
         const config = {
             width: width,
             height: height,
-            size: isMobile && isPortrait ? 'fixed' : 'fixed',
+            size: 'fixed',
             minWidth: 300,
             maxWidth: 1000,
             minHeight: 400,
@@ -183,21 +205,34 @@
             useMouseEvents: true,
             swipeDistance: 30,
             clickEventForward: true,
-            disableFlipByClick: false,
-            showPageCorners: true,
-            cornerSize: 100
+            disableFlipByClick: false
         };
 
+        console.log('Configuración:', config);
+
         try {
+            // Obtener todos los elementos de página
+            const pageElements = container.querySelectorAll('.stf__item, div[data-density]');
+            console.log('Elementos de página encontrados:', pageElements.length);
+
+            if (pageElements.length === 0) {
+                console.error('No se encontraron elementos de página!');
+                return;
+            }
+
             // Crear instancia de PageFlip
+            console.log('Creando instancia de St.PageFlip...');
             pageFlipInstance = new St.PageFlip(container, config);
+            console.log('Instancia creada:', pageFlipInstance);
 
             // Cargar páginas
-            pageFlipInstance.loadFromHTML(document.querySelectorAll('.stf__item'));
+            console.log('Cargando páginas desde HTML...');
+            pageFlipInstance.loadFromHTML(pageElements);
+            console.log('Páginas cargadas exitosamente');
 
             // Event listeners
             pageFlipInstance.on('flip', (e) => {
-                console.log('Página actual:', e.data);
+                console.log('Página volteada:', e.data);
                 updatePageCounter(e.data, totalPages);
             });
 
@@ -208,8 +243,14 @@
             // Crear controles de navegación
             createNavigationControls();
 
+            // Actualizar contador inicial
+            updatePageCounter(0, totalPages);
+
+            console.log('=== StPageFlip inicializado correctamente ===');
+
         } catch (error) {
             console.error('Error al inicializar PageFlip:', error);
+            alert('Error al inicializar el lector: ' + error.message);
         }
     }
 

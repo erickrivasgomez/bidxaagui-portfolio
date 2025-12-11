@@ -154,12 +154,43 @@
     <section class="section section-alt">
       <div class="container">
         <h2>Lee nuestras ediciones</h2>
-        <div id="editions-loading" class="loading-state">
-          <div class="spinner"></div>
-          <p>Cargando ediciones disponibles...</p>
-        </div>
-        <div id="editions-container" class="grid gallery">
-          <!-- Las ediciones se cargarán aquí dinámicamente -->
+        <div class="grid gallery">
+          <!-- Edición 1 -->
+          <div class="gallery-item edition-card" data-edition-id="1f81e2f1-fd2c-4844-b60e-3931e69dab02">
+            <img 
+              src="https://api.bidxaagui.com/api/images/editions/1f81e2f1-fd2c-4844-b60e-3931e69dab02/1_1765441583885.webp" 
+              alt="01 - Nov 2025 - Inaugural" 
+              class="edition-cover"
+              loading="lazy"
+              onerror="this.onerror=null; this.src='https://via.placeholder.com/400x600?text=Portada+no+disponible'"
+            >
+            <div class="edition-info">
+              <h3 class="edition-title">01 - Nov 2025</h3>
+              <p class="edition-date">Edición Inaugural</p>
+            </div>
+          </div>
+
+          <!-- Edición 2 -->
+          <div class="gallery-item edition-card" data-edition-id="e0f8ca61-7324-4994-b597-fa437ab764da">
+            <img 
+              src="https://api.bidxaagui.com/api/images/editions/e0f8ca61-7324-4994-b597-fa437ab764da/1_1765465889657.webp" 
+              alt="02 - Dic 2025 - Simbioceno" 
+              class="edition-cover"
+              loading="lazy"
+              onerror="this.onerror=null; this.src='https://via.placeholder.com/400x600?text=Portada+no+disponible'"
+            >
+            <div class="edition-info">
+              <h3 class="edition-title">02 - Dic 2025</h3>
+              <p class="edition-date">Simbioceno</p>
+            </div>
+          </div>
+
+          <!-- Próxima edición -->
+          <div class="gallery-item edition-card-disabled">
+            <i class="fas fa-hourglass-half edition-icon"></i>
+            <span>Edición 3 - Próximamente</span>
+            <p class="edition-hint">En preparación</p>
+          </div>
         </div>
       </div>
     </section>
@@ -258,106 +289,22 @@
     
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const API_URL = 'https://api.bidxaagui.com/api/ediciones';
-      const container = document.getElementById('editions-container');
-      const loading = document.getElementById('editions-loading');
-      
-      // Formatear fecha
-      function formatDate(dateString) {
-        const options = { year: 'numeric', month: 'long' };
-        return new Date(dateString).toLocaleDateString('es-MX', options);
-      }
-      
-      // Crear tarjeta de edición
-      function createEditionCard(edition) {
-        const card = document.createElement('div');
-        card.className = 'gallery-item edition-card';
-        card.setAttribute('data-edition-id', edition.id);
-        card.setAttribute('role', 'button');
-        card.setAttribute('tabindex', '0');
-        card.setAttribute('aria-label', `Leer ${edition.titulo} - ${formatDate(edition.fecha)}`);
-        
-        const coverUrl = edition.cover_url?.startsWith('http') 
-          ? edition.cover_url 
-          : `https://api.bidxaagui.com/api/images/${edition.cover_url || 'default-cover.jpg'}`;
-        
-        card.innerHTML = `
-          <img 
-            src="${coverUrl}" 
-            alt="${edition.titulo}" 
-            class="edition-cover"
-            loading="lazy"
-            onerror="this.onerror=null; this.src='https://via.placeholder.com/400x600?text=Portada+no+disponible'"
-          >
-          <div class="edition-info">
-            <h3 class="edition-title">${edition.titulo}</h3>
-            <p class="edition-date">${formatDate(edition.fecha)}</p>
-          </div>
-        `;
-        
-        // Agregar manejador de clic
-        card.addEventListener('click', () => {
-          window.location.href = `/leer/${edition.id}`;
+      // Manejadores de clic para las tarjetas de edición
+      document.querySelectorAll('.edition-card').forEach(card => {
+        card.addEventListener('click', function() {
+          const editionId = this.getAttribute('data-edition-id');
+          window.location.href = `/leer/${editionId}`;
         });
-        
+
         // Soporte para teclado
-        card.addEventListener('keypress', (e) => {
+        card.addEventListener('keypress', function(e) {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            window.location.href = `/leer/${edition.id}`;
+            const editionId = this.getAttribute('data-edition-id');
+            window.location.href = `/leer/${editionId}`;
           }
         });
-        
-        return card;
-      }
-      
-      // Cargar ediciones
-      async function loadEditions() {
-        try {
-          const response = await fetch(API_URL);
-          if (!response.ok) throw new Error('Error al cargar las ediciones');
-          
-          const data = await response.json();
-          const publishedEditions = data.data.filter(edition => edition.publicada === 1);
-          
-          // Limpiar el contenedor
-          container.innerHTML = '';
-          
-          // Agregar ediciones publicadas
-          publishedEditions.forEach(edition => {
-            container.appendChild(createEditionCard(edition));
-          });
-          
-          // Agregar tarjeta de próxima edición si hay menos de 3 ediciones
-          if (publishedEditions.length < 3) {
-            const nextEdition = document.createElement('div');
-            nextEdition.className = 'gallery-item edition-card-disabled';
-            nextEdition.innerHTML = `
-              <i class="fas fa-hourglass-half edition-icon"></i>
-              <span>Edición ${publishedEditions.length + 1} - Próximamente</span>
-              <p class="edition-hint">En preparación</p>
-            `;
-            container.appendChild(nextEdition);
-          }
-          
-          // Mostrar el contenedor y ocultar el indicador de carga
-          container.style.display = 'grid';
-          loading.style.display = 'none';
-          
-        } catch (error) {
-          console.error('Error:', error);
-          loading.innerHTML = `
-            <div class="error-message">
-              <i class="fas fa-exclamation-circle"></i>
-              <p>No se pudieron cargar las ediciones. Por favor, intente más tarde.</p>
-              <button onclick="loadEditions()" class="retry-button">Reintentar</button>
-            </div>
-          `;
-        }
-      }
-      
-      // Iniciar carga de ediciones
-      loadEditions();
+      });
     });
     </script>
 

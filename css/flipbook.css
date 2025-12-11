@@ -1,106 +1,28 @@
 /* ============================================
-   FLIPBOOK CUSTOM STYLES - Modo Libro Real
+   STPAGEFLIP CUSTOM STYLES
+   Estilos para el flipbook con librería StPageFlip
    ============================================ */
 
-.flipbook-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    perspective: 2000px;
-    perspective-origin: center;
+/* Contenedor principal del flipbook */
+.stf__parent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
 }
 
-.flipbook-stage {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* Wrapper del libro */
+.stf__wrapper {
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
 }
 
-/* El libro - Contenedor de las 2 páginas */
-.flipbook-book {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 90%;
-    transform-style: preserve-3d;
-}
-
-/* Modo SPREAD (2 páginas) - Desktop y Mobile Landscape */
-.mode-spread .flipbook-book {
-    width: auto;
-    max-width: 90%;
-}
-
-/* Modo SINGLE (1 página) - Mobile Portrait */
-.mode-single .flipbook-book {
-    width: 95%;
-    max-width: 600px;
-}
-
-/* ============================================
-   PÁGINAS DEL LIBRO
-   ============================================ */
-
-.flipbook-left-page,
-.flipbook-right-page {
-    position: relative;
-    height: 100%;
+/* Páginas del libro */
+.stf__item {
     background: white;
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
-    overflow: hidden;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
 }
 
-/* En modo SPREAD: 2 páginas lado a lado */
-.mode-spread .flipbook-left-page,
-.mode-spread .flipbook-right-page {
-    width: auto;
-    aspect-ratio: 0.7;
-    /* Relación 7:10 típica de revista */
-}
-
-/* Sin espacio entre páginas */
-.mode-spread .flipbook-left-page {
-    border-right: none;
-    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1);
-}
-
-.mode-spread .flipbook-right-page {
-    border-left: none;
-    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1);
-    transform-origin: left center;
-    /* Origen para animación */
-}
-
-/* En modo SINGLE: 1 página centrada */
-.mode-single .flipbook-left-page {
-    display: none;
-}
-
-.mode-single .flipbook-right-page {
-    width: 100%;
-    aspect-ratio: 0.7;
-    transform-origin: left center;
-}
-
-/* Página vacía (cuando no hay más páginas) */
-.flipbook-left-page.empty,
-.flipbook-right-page.empty {
-    background: #f5f5f5;
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
-}
-
-/* Imágenes dentro de las páginas */
-.flipbook-left-page img,
-.flipbook-right-page img {
+.stf__item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -108,79 +30,18 @@
 }
 
 /* ============================================
-   ANIMACIONES DE VOLTEO
-   ============================================ */
-
-/* Animación FORWARD (página derecha voltea hacia la izquierda) */
-.flipbook-right-page.flipping-forward {
-    animation: flipRightToLeft 1000ms cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
-    z-index: 100;
-}
-
-@keyframes flipRightToLeft {
-    0% {
-        transform: rotateY(0deg);
-        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
-    }
-
-    25% {
-        transform: rotateY(-45deg);
-        box-shadow: -5px 0 25px rgba(0, 0, 0, 0.3), 5px 0 15px rgba(0, 0, 0, 0.2);
-    }
-
-    50% {
-        transform: rotateY(-90deg);
-        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.4);
-    }
-
-    75% {
-        transform: rotateY(-135deg);
-        box-shadow: -5px 0 25px rgba(0, 0, 0, 0.3);
-    }
-
-    100% {
-        transform: rotateY(-180deg);
-        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
-    }
-}
-
-/* Animación BACKWARD (página izquierda voltea hacia la derecha) */
-.flipbook-left-page.flipping-backward {
-    animation: flipLeftToRight 1000ms cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
-    z-index: 100;
-    transform-origin: right center;
-}
-
-@keyframes flipLeftToRight {
-    0% {
-        transform: rotateY(0deg);
-        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
-    }
-
-    25% {
-        transform: rotateY(45deg);
-        box-shadow: 5px 0 25px rgba(0, 0, 0, 0.3), -5px 0 15px rgba(0, 0, 0, 0.2);
-    }
-
-    50% {
-        transform: rotateY(90deg);
-        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.4);
-    }
-
-    75% {
-        transform: rotateY(135deg);
-        box-shadow: 5px 0 25px rgba(0, 0, 0, 0.3);
-    }
-
-    100% {
-        transform: rotateY(180deg);
-        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
-    }
-}
-
-/* ============================================
    CONTROLES DE NAVEGACIÓN
    ============================================ */
+
+.flipbook-controls {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 50;
+}
 
 .flipbook-nav {
     position: absolute;
@@ -198,20 +59,21 @@
     z-index: 100;
     opacity: 0;
     transition: all 0.3s ease;
-    pointer-events: none;
+    pointer-events: all;
     display: flex;
     align-items: center;
     justify-content: center;
     user-select: none;
+    padding: 0;
 }
 
-.flipbook-container:hover .flipbook-nav {
+.flipbook-controls:hover .flipbook-nav,
+.reader-modal-content:hover .flipbook-nav {
     opacity: 0.5;
-    pointer-events: all;
 }
 
 .flipbook-nav:hover {
-    opacity: 1;
+    opacity: 1 !important;
     background: rgba(0, 0, 0, 0.6);
 }
 
@@ -221,13 +83,13 @@
 }
 
 .flipbook-prev {
-    left: 0;
+    left: 20px;
     border-radius: 0 8px 8px 0;
     border-left: none;
 }
 
 .flipbook-next {
-    right: 0;
+    right: 20px;
     border-radius: 8px 0 0 8px;
     border-right: none;
 }
@@ -249,6 +111,7 @@
     opacity: 0.8;
     transition: opacity 0.3s ease;
     user-select: none;
+    pointer-events: all;
 }
 
 .flipbook-counter:hover {
@@ -266,7 +129,16 @@
         font-size: 24px;
     }
 
-    .flipbook-container:hover .flipbook-nav {
+    .flipbook-prev {
+        left: 10px;
+    }
+
+    .flipbook-next {
+        right: 10px;
+    }
+
+    .flipbook-controls:hover .flipbook-nav,
+    .reader-modal-content:hover .flipbook-nav {
         opacity: 0.6;
     }
 
@@ -274,58 +146,6 @@
         font-size: 0.85rem;
         padding: 6px 12px;
         bottom: 12px;
-    }
-}
-
-/* Mobile Portrait - Una sola página */
-@media (max-width: 768px) and (orientation: portrait) {
-    .mode-single .flipbook-book {
-        width: 95%;
-    }
-
-    .mode-single .flipbook-right-page {
-        max-width: 100%;
-    }
-}
-
-/* Mobile Landscape - Dos páginas pero más pequeñas */
-@media (max-width: 768px) and (orientation: landscape) {
-    .mode-spread .flipbook-book {
-        height: 85%;
-        max-width: 95%;
-    }
-}
-
-/* ============================================
-   LOADING STATE
-   ============================================ */
-
-.flipbook-loading {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-size: 1.2rem;
-    z-index: 1000;
-    text-align: center;
-}
-
-.flipbook-loading::after {
-    content: '';
-    display: block;
-    width: 40px;
-    height: 40px;
-    margin: 16px auto 0;
-    border: 4px solid rgba(255, 255, 255, 0.3);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
     }
 }
 
@@ -338,33 +158,27 @@
     outline-offset: 4px;
 }
 
-/* Reducir animaciones para usuarios con preferencias */
-@media (prefers-reduced-motion: reduce) {
-
-    .flipbook-left-page,
-    .flipbook-right-page {
-        animation: none !important;
-        transition: none !important;
-    }
-}
-
 /* ============================================
-   EFECTO LIBRO ABIERTO
+   SOMBRAS Y EFECTOS DE STPAGEFLIP
+   Estos estilos mejoran la apariencia por defecto
    ============================================ */
 
-/* Sombra central que simula el lomo del libro */
-.mode-spread .flipbook-book::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 2px;
-    height: 100%;
-    background: linear-gradient(to bottom,
-            rgba(0, 0, 0, 0.1) 0%,
-            rgba(0, 0, 0, 0.2) 50%,
-            rgba(0, 0, 0, 0.1) 100%);
-    z-index: 10;
-    pointer-events: none;
+/* Sombra de las páginas durante el flip */
+.stf__block {
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Cursor para indicar interactividad */
+.stf__wrapper {
+    cursor: grab;
+}
+
+.stf__wrapper:active {
+    cursor: grabbing;
+}
+
+/* Esquinas clickeables */
+.stf__hardPageCorner,
+.stf__pageCorner {
+    cursor: pointer;
 }

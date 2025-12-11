@@ -1,6 +1,6 @@
 /**
- * Edition Reader Modal
- * Maneja el modal fullscreen para leer ediciones usando el admin portal público
+ * Edition Reader usando StPageFlip
+ * Implementación con librería page-flip para animaciones realistas
  */
 
 (function () {
@@ -19,9 +19,10 @@
 
     // Estado
     let currentEditionId = null;
+    let pageFlipInstance = null;
 
     /**
-     * Abre el modal del lector con flipbook custom
+     * Abre el modal del lector con StPageFlip
      */
     async function openReader(editionId) {
         currentEditionId = editionId;
@@ -58,12 +59,6 @@
                 throw new Error('No se encontraron páginas');
             }
 
-            // Preparar datos para el flipbook
-            const pagesData = pages.map((page, index) => ({
-                url: `${apiUrl}/api/images/${page.imagen_url}`,
-                number: page.numero || index + 1
-            }));
-
             // Ocultar loading
             loading.style.display = 'none';
 
@@ -72,26 +67,36 @@
             if (!flipbookContainer) {
                 flipbookContainer = document.createElement('div');
                 flipbookContainer.id = 'flipbook-container';
-                flipbookContainer.className = 'reader-flipbook';
-                modal.querySelector('.reader-modal-overlay').appendChild(flipbookContainer);
+                flipbookContainer.className = 'stf__parent';
+                modal.querySelector('.reader-modal-content').appendChild(flipbookContainer);
             }
 
             // Limpiar contenedor
             flipbookContainer.innerHTML = '';
             flipbookContainer.style.display = 'block';
 
-            // Inicializar flipbook
-            const flipbook = new window.Flipbook(flipbookContainer, {
-                animationDuration: 1000,
-                onPageFlip: (pageIndex) => {
-                    console.log('Página actual:', pageIndex + 1);
-                }
+            // Crear elementos de página
+            pages.forEach((page, index) => {
+                const pageEl = document.createElement('div');
+                pageEl.className = 'stf__item';
+                pageEl.dataset.density = index === 0 ? 'hard' : 'soft'; // Primera página "dura"
+
+                const img = document.createElement('img');
+                img.src = `${apiUrl}/api/images/${page.imagen_url}`;
+                img.alt = `Página ${index + 1}`;
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+
+                pageEl.appendChild(img);
+                flipbookContainer.appendChild(pageEl);
             });
 
-            flipbook.loadPages(pagesData);
+            // Esperar a que las imágenes carguen antes de inicializar
+            await waitForImagesToLoad(flipbookContainer);
 
-            // Guardar referencia
-            window.currentFlipbook = flipbook;
+            // Inicializar StPageFlip
+            initializePageFlip(flipbookContainer, pages.length);
 
         } catch (error) {
             console.error('Error al cargar edición:', error);
@@ -106,18 +111,167 @@
     }
 
     /**
+     * Esperar a que las imágenes se carguen
+     */
+    function waitForImagesToLoad(container) {
+        const images = container.querySelectorAll('img');
+        const promises = Array.from(images).map(img => {
+            return new Promise((resolve) => {
+                if (img.complete) {
+                    resolve();
+                } else {
+                    img.onload = () => resolve();
+                    img.onerror = () => resolve(); // Resolver incluso si hay error
+                }
+            });
+        });
+        return Promise.all(promises);
+    }
+
+    /**
+     * Inicializar StPageFlip con configuración adaptativa
+     */
+    function initializePageFlip(container, totalPages) {
+        // Detectar modo
+        const isMobile = window.innerWidth < 768;
+        const isPortrait = window.innerHeight > window.innerWidth;
+
+        // Calcular dimensiones
+        const containerW = window.innerWidth;
+        const containerH = window.innerHeight;
+
+        let width, height;
+
+        if (isMobile && isPortrait) {
+            // Mobile Portrait: 1 página, usar ancho como constraint
+            width = Math.floor(containerW * 0.9);
+            height = Math.floor(width / 0.7); // Ratio 7:10
+
+            // Ajustar si la altura es muy grande
+            if (height > containerH * 0.85) {
+                height = Math.floor(containerH * 0.85);
+                width = Math.floor(height * 0.7);
+            }
+        } else {
+            // Desktop y Mobile Landscape: 2 páginas, usar altura como constraint
+            height = Math.floor(containerH * 0.9);
+            width = Math.floor(height * 0.7); // Cada página con ratio 7:10
+
+            // Ajustar si 2 páginas no caben
+            if ((width * 2) > containerW * 0.9) {
+                width = Math.floor((containerW * 0.9) / 2);
+                height = Math.floor(width / 0.7);
+            }
+        }
+
+        // Configuración de StPageFlip
+        const config = {
+            width: width,
+            height: height,
+            size: isMobile && isPortrait ? 'fixed' : 'fixed',
+            minWidth: 300,
+            maxWidth: 1000,
+            minHeight: 400,
+            maxHeight: 1600,
+            maxShadowOpacity: 0.5,
+            showCover: true,
+            mobileScrollSupport: true,
+            usePortrait: isMobile && isPortrait,
+            startPage: 0,
+            drawShadow: true,
+            flippingTime: 1000,
+            useMouseEvents: true,
+            swipeDistance: 30,
+            clickEventForward: true,
+            disableFlipByClick: false,
+            showPageCorners: true,
+            cornerSize: 100
+        };
+
+        try {
+            // Crear instancia de PageFlip
+            pageFlipInstance = new St.PageFlip(container, config);
+
+            // Cargar páginas
+            pageFlipInstance.loadFromHTML(document.querySelectorAll('.stf__item'));
+
+            // Event listeners
+            pageFlipInstance.on('flip', (e) => {
+                console.log('Página actual:', e.data);
+                updatePageCounter(e.data, totalPages);
+            });
+
+            pageFlipInstance.on('changeOrientation', (e) => {
+                console.log('Orientación cambiada:', e.data);
+            });
+
+            // Crear controles de navegación
+            createNavigationControls();
+
+        } catch (error) {
+            console.error('Error al inicializar PageFlip:', error);
+        }
+    }
+
+    /**
+     * Crear controles de navegación
+     */
+    function createNavigationControls() {
+        // Eliminar controles anteriores si existen
+        const oldControls = document.querySelector('.flipbook-controls');
+        if (oldControls) oldControls.remove();
+
+        const controls = document.createElement('div');
+        controls.className = 'flipbook-controls';
+        controls.innerHTML = `
+            <button class="flipbook-nav flipbook-prev" aria-label="Página anterior">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="flipbook-nav flipbook-next" aria-label="Página siguiente">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <div class="flipbook-counter">
+                <span class="current-page">1</span> / <span class="total-pages">0</span>
+            </div>
+        `;
+
+        modal.querySelector('.reader-modal-content').appendChild(controls);
+
+        // Event listeners para botones
+        controls.querySelector('.flipbook-prev').addEventListener('click', () => {
+            if (pageFlipInstance) pageFlipInstance.flipPrev();
+        });
+
+        controls.querySelector('.flipbook-next').addEventListener('click', () => {
+            if (pageFlipInstance) pageFlipInstance.flipNext();
+        });
+    }
+
+    /**
+     * Actualizar contador de páginas
+     */
+    function updatePageCounter(currentPage, totalPages) {
+        const currentEl = document.querySelector('.flipbook-counter .current-page');
+        const totalEl = document.querySelector('.flipbook-counter .total-pages');
+
+        if (currentEl && totalEl) {
+            currentEl.textContent = currentPage + 1;
+            totalEl.textContent = totalPages;
+        }
+    }
+
+    /**
      * Cierra el modal del lector
      */
     function closeReader() {
         modal.classList.remove('active');
-        document.body.style.overflow = ''; // Restaurar scroll
+        document.body.style.overflow = '';
 
-        // Pequeño delay antes de limpiar
         setTimeout(() => {
-            // Destruir flipbook si existe
-            if (window.currentFlipbook) {
-                window.currentFlipbook.destroy();
-                window.currentFlipbook = null;
+            // Destruir instancia de PageFlip
+            if (pageFlipInstance) {
+                pageFlipInstance.destroy();
+                pageFlipInstance = null;
             }
 
             // Limpiar contenedor
@@ -126,6 +280,10 @@
                 flipbookContainer.style.display = 'none';
                 flipbookContainer.innerHTML = '';
             }
+
+            // Limpiar controles
+            const controls = document.querySelector('.flipbook-controls');
+            if (controls) controls.remove();
 
             currentEditionId = null;
         }, 300);
@@ -146,7 +304,7 @@
             }
         });
 
-        // Accesibilidad: permitir Enter y Space
+        // Accesibilidad
         card.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
@@ -157,7 +315,6 @@
             }
         });
 
-        // Hacer las cards tabbable
         card.setAttribute('tabindex', '0');
         card.setAttribute('role', 'button');
         card.setAttribute('aria-label', `Abrir ${card.querySelector('span')?.textContent}`);
@@ -180,23 +337,13 @@
         }
     });
 
-    // Prevenir cierre accidental
-    window.addEventListener('beforeunload', function (e) {
-        if (modal.classList.contains('active')) {
-            // Opcional: mostrar confirmación si hay una edición abierta
-            // e.preventDefault();
-            // e.returnValue = '';
-        }
-    });
-
-    // Mensaje del iframe (comunicación cross-origin si es necesario)
-    window.addEventListener('message', function (e) {
-        // Validar origen por seguridad
-        if (e.origin === ADMIN_URL) {
-            // Aquí puedes manejar mensajes del iframe si lo necesitas en el futuro
-            // Por ejemplo: cerrar modal, tracking de páginas, etc.
-            if (e.data.type === 'closeReader') {
-                closeReader();
+    // Navegación con teclas de flecha
+    document.addEventListener('keydown', function (e) {
+        if (modal.classList.contains('active') && pageFlipInstance) {
+            if (e.key === 'ArrowLeft') {
+                pageFlipInstance.flipPrev();
+            } else if (e.key === 'ArrowRight') {
+                pageFlipInstance.flipNext();
             }
         }
     });

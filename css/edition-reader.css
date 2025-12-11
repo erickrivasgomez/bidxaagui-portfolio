@@ -1,0 +1,266 @@
+/**
+ * Edition Reader Modal Styles
+ * Estilos modernos para el modal fullscreen del lector de ediciones
+ */
+
+/* Modal Container */
+.reader-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.reader-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Overlay con efecto blur */
+.reader-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: fadeIn 0.3s ease;
+}
+
+/* Contenido del modal */
+.reader-modal-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+/* Botón cerrar */
+.reader-close {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.reader-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.reader-close:active {
+    transform: rotate(90deg) scale(0.95);
+}
+
+/* Loading State */
+.reader-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    z-index: 2;
+}
+
+.reader-loading p {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #4a90e2;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Iframe del lector */
+.reader-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: none;
+    background: transparent;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.reader-iframe.loaded {
+    opacity: 1;
+}
+
+/* Estilos para el botón Leer */
+.btn-reader {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-reader i {
+    transition: transform 0.3s ease;
+}
+
+.btn-reader:hover i {
+    transform: scale(1.2) rotate(5deg);
+}
+
+.btn-reader::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+.btn-reader:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .reader-close {
+        top: 10px;
+        right: 10px;
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+
+    .reader-loading p {
+        font-size: 1rem;
+    }
+
+    .loading-spinner {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+/* Accesibilidad - Focus states */
+.reader-close:focus-visible {
+    outline: 2px solid #4a90e2;
+    outline-offset: 4px;
+}
+
+.btn-reader:focus-visible {
+    outline: 2px solid #4a90e2;
+    outline-offset: 2px;
+}
+
+/* Prevenir selección de texto durante interacciones */
+.reader-modal-overlay,
+.reader-close {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Animación de entrada del modal */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.reader-modal.active .reader-modal-content {
+    animation: modalSlideIn 0.3s ease;
+}
+
+/* Mejoras de rendimiento */
+.reader-modal {
+    will-change: opacity, visibility;
+}
+
+.reader-iframe {
+    will-change: opacity;
+}
+
+/* Dark mode support (si el navegador lo soporta) */
+@media (prefers-color-scheme: dark) {
+    .reader-modal-overlay {
+        background: rgba(0, 0, 0, 0.95);
+    }
+}
+
+/* Reducir movimiento para usuarios con preferencias de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+
+    .reader-modal,
+    .reader-close,
+    .reader-iframe,
+    .btn-reader,
+    .btn-reader::before,
+    .loading-spinner {
+        animation: none !important;
+        transition: none !important;
+    }
+}

@@ -351,12 +351,14 @@
               ? `${API_URL}/api/images/${edition.cover_url}`
               : 'https://via.placeholder.com/400x600?text=Portada+no+disponible';
 
-            // Resolver enlace de descarga (Simulación basada en patrón de nombres)
-            // Nota: Lo ideal sería añadir un campo 'pdf_url' en la base de datos del worker
+            // Resolver enlace de descarga dinámico desde la base de datos
             let pdfLink = '';
-            if (edition.titulo.includes('03')) pdfLink = '../assets/documents/Antroponómadas - 03 - Ene Feb 2026 - Comunidad.pdf';
-            else if (edition.titulo.includes('02')) pdfLink = '../assets/documents/Antroponómadas - 02 - Dic 2025 - Simbioceno.pdf';
-            else if (edition.titulo.includes('01')) pdfLink = '../assets/documents/Antroponómadas - 01 - Nov 2025 - Inaugural.pdf';
+            if (edition.pdf_url) {
+              // Si ya es una URL completa, usarla; si no, construir la ruta relativa
+              pdfLink = edition.pdf_url.startsWith('http')
+                ? edition.pdf_url
+                : edition.pdf_url; // Ya viene como '../assets/documents/...' desde el worker
+            }
 
             card.innerHTML += `
               <img src="${coverImg}" alt="${edition.titulo}" class="edition-cover" loading="lazy" 

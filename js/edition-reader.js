@@ -200,15 +200,20 @@
         }, 300);
     }
 
-    // Event Listeners
-    document.querySelectorAll('.edition-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-            // Check if disabled
-            if (card.classList.contains('edition-card-disabled')) return;
-            // Get ID
-            const id = card.getAttribute('data-edition-id');
-            if (id) openReader(id);
-        });
+    // Event Delegation para clics en tarjetas (soporta carga dinámica)
+    document.addEventListener('click', (e) => {
+        const card = e.target.closest('.edition-card');
+        if (!card) return;
+
+        // Evitar que el clic en el botón de descarga abra el lector
+        if (e.target.closest('.download-button')) return;
+
+        // Check if disabled
+        if (card.classList.contains('edition-card-disabled')) return;
+
+        // Get ID
+        const id = card.getAttribute('data-edition-id');
+        if (id) openReader(id);
     });
 
     if (closeBtn) closeBtn.addEventListener('click', closeReader);

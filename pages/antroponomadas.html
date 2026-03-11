@@ -154,54 +154,10 @@
     <section class="section section-alt">
       <div class="container">
         <h2>Lee nuestras ediciones</h2>
-        <div class="editions-carousel">
-          <!-- Edición 3 (Más reciente) -->
-          <div class="gallery-item edition-card" data-edition-id="82d6f77c-2e81-4946-9c82-eaca719a3846">
-            <span class="badge-new">Nueva</span>
-            <img
-              src="https://api.bidxaagui.com/api/images/editions/82d6f77c-2e81-4946-9c82-eaca719a3846/1_1770788365658.webp"
-              alt="03 - Ene Feb 2026 - Comunidad" class="edition-cover" loading="lazy"
-              onerror="this.onerror=null; this.src='https://via.placeholder.com/400x600?text=Portada+no+disponible'">
-            <div class="edition-info">
-              <h3 class="edition-title">03 - Ene Feb 2026</h3>
-              <p class="edition-date">Comunidad</p>
-              <a href="../assets/documents/Antroponómadas - 03 - Ene Feb 2026 - Comunidad.pdf" download
-                class="download-button" aria-label="Descargar Edición Comunidad">
-                <i class="fas fa-download"></i> Descargar PDF
-              </a>
-            </div>
-          </div>
-
-          <!-- Edición 2 -->
-          <div class="gallery-item edition-card" data-edition-id="e0f8ca61-7324-4994-b597-fa437ab764da">
-            <img
-              src="https://api.bidxaagui.com/api/images/editions/e0f8ca61-7324-4994-b597-fa437ab764da/1_1765465889657.webp"
-              alt="02 - Dic 2025 - Simbioceno" class="edition-cover" loading="lazy"
-              onerror="this.onerror=null; this.src='https://via.placeholder.com/400x600?text=Portada+no+disponible'">
-            <div class="edition-info">
-              <h3 class="edition-title">02 - Dic 2025</h3>
-              <p class="edition-date">Simbioceno</p>
-              <a href="../assets/documents/Antroponómadas - 02 - Dic 2025 - Simbioceno.pdf" download
-                class="download-button" aria-label="Descargar Edición Simbioceno">
-                <i class="fas fa-download"></i> Descargar PDF
-              </a>
-            </div>
-          </div>
-
-          <!-- Edición 1 (Más antigua) -->
-          <div class="gallery-item edition-card" data-edition-id="1f81e2f1-fd2c-4844-b60e-3931e69dab02">
-            <img
-              src="https://api.bidxaagui.com/api/images/editions/1f81e2f1-fd2c-4844-b60e-3931e69dab02/1_1765441583885.webp"
-              alt="01 - Nov 2025 - Inaugural" class="edition-cover" loading="lazy"
-              onerror="this.onerror=null; this.src='https://via.placeholder.com/400x600?text=Portada+no+disponible'">
-            <div class="edition-info">
-              <h3 class="edition-title">01 - Nov 2025</h3>
-              <p class="edition-date">Edición Inaugural</p>
-              <a href="../assets/documents/Antroponómadas - 01 - Nov 2025 - Inaugural.pdf" download
-                class="download-button" aria-label="Descargar Edición Inaugural">
-                <i class="fas fa-download"></i> Descargar PDF
-              </a>
-            </div>
+        <div class="editions-carousel" id="editions-container">
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Cargando ediciones...</p>
           </div>
         </div>
       </div>
@@ -227,7 +183,7 @@
       }
 
       .edition-card {
-        flex: 0 0 300px;
+        flex: 0 0 250px;
         scroll-snap-align: start;
         position: relative;
         overflow: hidden;
@@ -354,8 +310,76 @@
     </style>
 
     <script>
-      // El manejo de clics se hace desde edition-reader.js
-      // No es necesario agregar manejadores adicionales aquí
+      // Cargar ediciones dinámicamente desde el Backend Worker
+      async function loadEditions() {
+        const container = document.getElementById('editions-container');
+        if (!container) return;
+
+        const API_URL = window.location.hostname.includes('bidxaagui.com')
+          ? 'https://api.bidxaagui.com'
+          : 'http://localhost:8787';
+
+        try {
+          const response = await fetch(`${API_URL}/api/ediciones`);
+          if (!response.ok) throw new Error('Error al cargar ediciones');
+
+          const json = await response.json();
+          // Las ediciones ya vienen ordenadas por fecha DESC desde el backend
+          const editions = json.data || [];
+
+          if (editions.length === 0) {
+            container.innerHTML = '<p style="padding: 2rem; color: #fff;">Próximamente más ediciones...</p>';
+            return;
+          }
+
+          container.innerHTML = ''; // Limpiar spinner de carga
+
+          editions.forEach((edition, index) => {
+            const card = document.createElement('div');
+            card.className = 'gallery-item edition-card';
+            card.setAttribute('data-edition-id', edition.id);
+
+            // Badge "Nueva" solo para la más reciente
+            if (index === 0) {
+              const badge = document.createElement('span');
+              badge.className = 'badge-new';
+              badge.textContent = 'Nueva';
+              card.appendChild(badge);
+            }
+
+            const coverImg = edition.cover_url
+              ? `${API_URL}/api/images/${edition.cover_url}`
+              : 'https://via.placeholder.com/400x600?text=Portada+no+disponible';
+
+            // Resolver enlace de descarga (Simulación basada en patrón de nombres)
+            // Nota: Lo ideal sería añadir un campo 'pdf_url' en la base de datos del worker
+            let pdfLink = '';
+            if (edition.titulo.includes('03')) pdfLink = '../assets/documents/Antroponómadas - 03 - Ene Feb 2026 - Comunidad.pdf';
+            else if (edition.titulo.includes('02')) pdfLink = '../assets/documents/Antroponómadas - 02 - Dic 2025 - Simbioceno.pdf';
+            else if (edition.titulo.includes('01')) pdfLink = '../assets/documents/Antroponómadas - 01 - Nov 2025 - Inaugural.pdf';
+
+            card.innerHTML += `
+              <img src="${coverImg}" alt="${edition.titulo}" class="edition-cover" loading="lazy" 
+                   onerror="this.onerror=null; this.src='https://via.placeholder.com/400x600?text=No+disponible'">
+              <div class="edition-info">
+                <h3 class="edition-title">${edition.titulo}</h3>
+                <p class="edition-date">${edition.descripcion || ''}</p>
+                ${pdfLink ? `
+                <a href="${pdfLink}" download class="download-button" onclick="event.stopPropagation()">
+                  <i class="fas fa-download"></i> Descargar PDF
+                </a>` : ''}
+              </div>
+            `;
+            container.appendChild(card);
+          });
+        } catch (error) {
+          console.error('Error loading carousel:', error);
+          container.innerHTML = '<p style="color: #ff6b6b; padding: 1rem;">No se pudieron cargar las ediciones.</p>';
+        }
+      }
+
+      // Inicializar carga al cargar el DOM
+      document.addEventListener('DOMContentLoaded', loadEditions);
     </script>
 
     <!-- Modal fullscreen para el lector -->

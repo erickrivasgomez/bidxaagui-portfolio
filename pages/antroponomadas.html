@@ -154,18 +154,19 @@
     <section class="section section-alt">
       <div class="container">
         <h2>Lee nuestras ediciones</h2>
-        <div class="grid gallery">
-          <!-- Edición 1 -->
-          <div class="gallery-item edition-card" data-edition-id="1f81e2f1-fd2c-4844-b60e-3931e69dab02">
+        <div class="editions-carousel">
+          <!-- Edición 3 (Más reciente) -->
+          <div class="gallery-item edition-card" data-edition-id="82d6f77c-2e81-4946-9c82-eaca719a3846">
+            <span class="badge-new">Nueva</span>
             <img
-              src="https://api.bidxaagui.com/api/images/editions/1f81e2f1-fd2c-4844-b60e-3931e69dab02/1_1765441583885.webp"
-              alt="01 - Nov 2025 - Inaugural" class="edition-cover" loading="lazy"
+              src="https://api.bidxaagui.com/api/images/editions/82d6f77c-2e81-4946-9c82-eaca719a3846/1_1770788365658.webp"
+              alt="03 - Ene Feb 2026 - Comunidad" class="edition-cover" loading="lazy"
               onerror="this.onerror=null; this.src='https://via.placeholder.com/400x600?text=Portada+no+disponible'">
             <div class="edition-info">
-              <h3 class="edition-title">01 - Nov 2025</h3>
-              <p class="edition-date">Edición Inaugural</p>
-              <a href="../assets/documents/Antroponómadas - 01 - Nov 2025 - Inaugural.pdf" download
-                class="download-button" aria-label="Descargar Edición Inaugural">
+              <h3 class="edition-title">03 - Ene Feb 2026</h3>
+              <p class="edition-date">Comunidad</p>
+              <a href="../assets/documents/Antroponómadas - 03 - Ene Feb 2026 - Comunidad.pdf" download
+                class="download-button" aria-label="Descargar Edición Comunidad">
                 <i class="fas fa-download"></i> Descargar PDF
               </a>
             </div>
@@ -187,34 +188,47 @@
             </div>
           </div>
 
-          <!-- Edición 3 -->
-          <div class="gallery-item edition-card" data-edition-id="82d6f77c-2e81-4946-9c82-eaca719a3846">
+          <!-- Edición 1 (Más antigua) -->
+          <div class="gallery-item edition-card" data-edition-id="1f81e2f1-fd2c-4844-b60e-3931e69dab02">
             <img
-              src="https://api.bidxaagui.com/api/images/editions/82d6f77c-2e81-4946-9c82-eaca719a3846/1_1770788365658.webp"
-              alt="03 - Ene Feb 2026 - Comunidad" class="edition-cover" loading="lazy"
+              src="https://api.bidxaagui.com/api/images/editions/1f81e2f1-fd2c-4844-b60e-3931e69dab02/1_1765441583885.webp"
+              alt="01 - Nov 2025 - Inaugural" class="edition-cover" loading="lazy"
               onerror="this.onerror=null; this.src='https://via.placeholder.com/400x600?text=Portada+no+disponible'">
             <div class="edition-info">
-              <h3 class="edition-title">03 - Ene Feb 2026</h3>
-              <p class="edition-date">Comunidad</p>
-              <a href="../assets/documents/Antroponómadas - 03 - Ene Feb 2026 - Comunidad.pdf" download
-                class="download-button" aria-label="Descargar Edición Comunidad">
+              <h3 class="edition-title">01 - Nov 2025</h3>
+              <p class="edition-date">Edición Inaugural</p>
+              <a href="../assets/documents/Antroponómadas - 01 - Nov 2025 - Inaugural.pdf" download
+                class="download-button" aria-label="Descargar Edición Inaugural">
                 <i class="fas fa-download"></i> Descargar PDF
               </a>
             </div>
-          </div>
-
-          <!-- Próxima edición -->
-          <div class="gallery-item edition-card-disabled">
-            <i class="fas fa-hourglass-half edition-icon"></i>
-            <span>Siguiente edición</span>
-            <p class="edition-hint">Próximamente</p>
           </div>
         </div>
       </div>
     </section>
 
     <style>
+      .editions-carousel {
+        display: flex;
+        overflow-x: auto;
+        gap: 24px;
+        padding: 20px 0 40px;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+        /* Firefox */
+        -ms-overflow-style: none;
+        /* IE/Edge */
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .editions-carousel::-webkit-scrollbar {
+        display: none;
+        /* Chrome/Safari */
+      }
+
       .edition-card {
+        flex: 0 0 300px;
+        scroll-snap-align: start;
         position: relative;
         overflow: hidden;
         border-radius: 8px;
@@ -307,6 +321,35 @@
         font-size: 2.5rem;
         margin-bottom: 1rem;
         color: #666;
+      }
+
+      /* Badge para la edición más reciente */
+      .badge-new {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: var(--accent);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        z-index: 10;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      @media (max-width: 768px) {
+        .edition-card {
+          flex: 0 0 260px;
+        }
+
+        .editions-carousel {
+          gap: 16px;
+          padding-left: 10px;
+          padding-right: 10px;
+        }
       }
     </style>
 

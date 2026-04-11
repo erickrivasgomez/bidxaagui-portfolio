@@ -8,8 +8,18 @@
   <meta name="description" content="BIDXAAGUI Medicina Naturista. Sesiones, cursos y recursos de bienestar integral.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Preload Critical Assets for LCP -->
+  <link rel="preload" as="image" href="assets/images/welcome-bg.jpg" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/images/profile.jpg" fetchpriority="high">
+  <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/merienda/v15/buE2vov8T85uVOf8nEda_A.woff2" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  </noscript>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 
@@ -19,7 +29,7 @@
   <header class="site-header" role="banner">
     <div class="container header-inner">
       <a href="index.html" class="brand" aria-label="BIDXAAGUI Home">
-        <img src="assets/images/downloads/logo-transparente.png" alt="BIDXAAGUI Logo" class="brand-logo">
+        <img src="assets/images/downloads/logo-transparente.png" alt="BIDXAAGUI Logo" class="brand-logo" width="40" height="40" fetchpriority="high">
         BIDXAAGUI
       </a>
       <button class="menu-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
@@ -81,7 +91,7 @@
       <div class="container hero-layout">
         <div class="hero-left">
           <div class="hero-image offset-image animate-on-scroll">
-            <img src="assets/images/profile.jpg" alt="Fundadora de BIDXAAGUI" />
+            <img src="assets/images/profile.jpg" alt="Fundadora de BIDXAAGUI" width="380" height="380" fetchpriority="high" />
           </div>
           <blockquote class="hero-quote">
             Habitar la salud es un camino personal y colectivo. Equilibrar cuerpo, mente y energía es una elección

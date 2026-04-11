@@ -8,8 +8,18 @@
   <meta name="description" content="Un espacio para la antropología crítica y la creación literaria.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Preload Critical Assets for LCP -->
+  <link rel="preload" as="image" href="../../assets/images/welcome-bg.jpg" fetchpriority="high">
+  <link rel="preload" as="image" href="../assets/images/downloads/antroponomadas-image.jpg" fetchpriority="high">
+  <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/merienda/v15/buE2vov8T85uVOf8nEda_A.woff2" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  </noscript>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/edition-reader.css">
   <link rel="stylesheet" href="../css/edition-cards.css">
@@ -21,7 +31,7 @@
   <header class="site-header" role="banner">
     <div class="container header-inner">
       <a href="../index.html" class="brand" aria-label="BIDXAAGUI Home">
-        <img src="../assets/images/downloads/logo-transparente.png" alt="BIDXAAGUI Logo" class="brand-logo">
+        <img src="../assets/images/downloads/logo-transparente.png" alt="BIDXAAGUI Logo" class="brand-logo" width="40" height="40" fetchpriority="high">
         BIDXAAGUI
       </a>
       <button class="menu-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
@@ -81,7 +91,7 @@
             Antroponómadas
           </h1>
           <div style="margin-top: 32px;margin-bottom: 16px;">
-            <a href="https://forms.gle/2Yzs3ZMgd9oNgytv9" target="_blank" rel="noopener"
+            <a href="https://forms.gle/yBdMwkdJ4YityueT8" target="_blank" rel="noopener"
               class="btn btn-green btn-animated">Participar en la próxima edición</a>
           </div>
         </div>
@@ -95,7 +105,7 @@
           <div style="display: flex; gap: 25px; margin: 24px 0; align-items: center;">
             <div style="flex: 0 0 250px; display: flex; align-items: center; margin-bottom: 18%;">
               <img src="../assets/images/downloads/antroponomadas-image.jpg" alt="Antroponómadas"
-                style="width: 100%; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                style="width: 100%; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" fetchpriority="high">
             </div>
             <ul class="feature-list" style="flex: 1;">
               <li data-icon="seedling">

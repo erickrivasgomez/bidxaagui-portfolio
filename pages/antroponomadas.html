@@ -154,16 +154,80 @@
     <section class="section section-alt">
       <div class="container">
         <h2>Lee nuestras ediciones</h2>
-        <div class="editions-carousel" id="editions-container">
-          <div class="loading-state">
-            <div class="spinner"></div>
-            <p>Cargando ediciones...</p>
+        <div class="carousel-wrapper">
+          <button class="carousel-nav prev" aria-label="Ediciones anteriores">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <div class="editions-carousel" id="editions-container">
+            <div class="loading-state">
+              <div class="spinner"></div>
+              <p>Cargando ediciones...</p>
+            </div>
           </div>
+          <button class="carousel-nav next" aria-label="Ediciones siguientes">
+            <i class="fas fa-chevron-right"></i>
+          </button>
         </div>
       </div>
     </section>
 
     <style>
+      .carousel-wrapper {
+        position: relative;
+        width: 100%;
+        margin-top: 20px;
+      }
+
+      .carousel-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 45px;
+        height: 45px;
+        background: rgba(255, 255, 255, 0.95);
+        border: none;
+        border-radius: 50%;
+        color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 25;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .carousel-wrapper:hover .carousel-nav {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .carousel-nav:hover {
+        background: #4a5239;
+        color: white;
+        transform: translateY(-50%) scale(1.15);
+      }
+
+      .carousel-nav.prev {
+        left: -22px;
+      }
+
+      .carousel-nav.next {
+        right: -22px;
+      }
+
+      .carousel-nav i {
+        font-size: 1.2rem;
+      }
+
+      @media (max-width: 1024px) {
+        .carousel-nav {
+          display: none !important;
+        }
+      }
+
       .editions-carousel {
         display: flex;
         overflow-x: auto;
@@ -374,10 +438,42 @@
             `;
             container.appendChild(card);
           });
+
+          // Inicializar navegación por botones
+          initCarouselNav();
         } catch (error) {
           console.error('Error loading carousel:', error);
           container.innerHTML = '<p style="color: #ff6b6b; padding: 1rem;">No se pudieron cargar las ediciones.</p>';
         }
+      }
+
+      function initCarouselNav() {
+        const container = document.getElementById('editions-container');
+        const prevBtn = document.querySelector('.carousel-nav.prev');
+        const nextBtn = document.querySelector('.carousel-nav.next');
+
+        if (!container || !prevBtn || !nextBtn) return;
+
+        // Mostrar botones solo si hay contenido que desplazar
+        const checkScroll = () => {
+          prevBtn.style.display = container.scrollLeft > 10 ? 'flex' : 'none';
+          nextBtn.style.display = (container.scrollWidth - container.clientWidth - container.scrollLeft) > 10 ? 'flex' : 'none';
+        };
+
+        const scrollDistance = 280; // Ancho de tarjeta + gap aprox
+
+        nextBtn.addEventListener('click', () => {
+          container.scrollBy({ left: scrollDistance, behavior: 'smooth' });
+        });
+
+        prevBtn.addEventListener('click', () => {
+          container.scrollBy({ left: -scrollDistance, behavior: 'smooth' });
+        });
+
+        // Actualizar visibilidad al hacer scroll
+        container.addEventListener('scroll', checkScroll);
+        // Verificar al inicio
+        setTimeout(checkScroll, 500);
       }
 
       // Inicializar carga al cargar el DOM
